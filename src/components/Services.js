@@ -32,7 +32,10 @@ const servicesData = [
 
 const Services = memo(() => {
   return (
-    <div className="flex flex-row flex-wrap justify-evenly bg-gradient-to-b from-blue-200 from-30% to-amber-200 to-10%... p-8 min-h-[600px] ">
+    <div
+      id="sevices"
+      className="flex flex-row flex-wrap justify-evenly bg-gradient-to-b from-blue-200 from-30% to-amber-200 to-10%... p-8 min-h-[600px] "
+    >
       <FadingText time={2000}>
         <section className="bg-rose-800 py-16 rounded-md">
           <div className="container mx-auto px-6">

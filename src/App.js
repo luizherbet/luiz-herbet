@@ -12,14 +12,16 @@ import Home from './pages/Home';
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        {/* Descomente as linhas abaixo para outras rotas */}
-        {/* <Route path="/about" element={<About />} />
+      <div className="scroll-smooth">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          {/* Descomente as linhas abaixo para outras rotas */}
+          {/* <Route path="/about" element={<About />} />
         <Route path="/books" element={<Books />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/contact" element={<Contact />} /> */}
-      </Routes>
+        </Routes>
+      </div>
     </Router>
   );
 }
