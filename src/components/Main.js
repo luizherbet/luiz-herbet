@@ -5,8 +5,8 @@ import program from '../assets/img/program.svg';
 
 const Main = memo(() => {
   return (
-    <main className="flex flex-row flex-wrap justify-evenly bg-gradient-to-b from-blue-50 from-30% to-blue-200 to-10%... p-8 min-h-[520px]">
-      <section className=" basis-4/12 text-center">
+    <main className="flex flex-col sm:flex-row flex-wrap justify-evenly bg-gradient-to-b from-blue-50 from-30% to-blue-200 to-10%... p-8 min-h-[520px]">
+      <section className="basis-full sm:basis-6/12 text-center mb-8 sm:mb-0">
         <h2 className="text-3xl font-bold text-gray-800 mb-7 mt-7">
           <Typing time={100} text="Transforme sua Presença Online" />
         </h2>
@@ -38,9 +38,13 @@ const Main = memo(() => {
           </a>
         </FadingText>
       </section>
-      <section className=" basis-4/12 text-center">
+      <section className="basis-full sm:basis-4/12 text-center">
         <FadingText time={1600}>
-          <img className="w-[400px] mt-10" src={program} alt="" />
+          <img
+            className="w-[300px] sm:w-[400px] mt-10 mx-auto"
+            src={program}
+            alt=""
+          />
         </FadingText>
       </section>
     </main>
