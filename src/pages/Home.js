@@ -14,7 +14,6 @@ const Home = memo(() => {
       <Services />
       <BusinessCard />
       <Footer />
-      <NavBarv2 />
     </div>
   );
 });
