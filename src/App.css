@@ -1,3 +1,10 @@
+.exo-2-font {
+  font-family: 'Exo 2', serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+}
+
 .App {
   text-align: center;
 }

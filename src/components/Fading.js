@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const FadingText = ({ children, time = 400 }) => {
+const Fading = ({ children, time = 400 }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -19,4 +19,4 @@ const FadingText = ({ children, time = 400 }) => {
   );
 };
 
-export default FadingText;
+export default Fading;

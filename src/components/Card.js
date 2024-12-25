@@ -4,7 +4,7 @@ import qrcode from '../assets/img/qrcode.png';
 
 const BusinessCard = () => {
   return (
-    <div className=" bg-gradient-to-b from-amber-200 from-30% to-blue-200 to-10%... flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
+    <div className=" bg-gradient-to-b from-slate-500 from-30% to-slate-800 to-10%... flex flex-col items-center justify-center min-h-screen bg-gray-100 p-6">
       {/* Cartão de Visita */}
       <div className="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
         {/* Imagem no Topo */}

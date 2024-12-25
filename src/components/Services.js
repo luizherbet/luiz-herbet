@@ -1,63 +1,73 @@
 import React, { memo } from 'react';
-import FadingText from './FadingText';
+import Fading from './Fading';
+import {
+  FaGlobe,
+  FaChartLine,
+  FaShoppingCart,
+  FaBrush,
+  FaBullhorn,
+  FaTachometerAlt,
+} from 'react-icons/fa';
 
 const servicesData = [
   {
     title: 'Criação de Sites',
     description: 'Sites responsivos e otimizados para o seu negócio.',
+    icon: <FaGlobe />,
   },
   {
     title: 'Gestão de Redes Sociais',
     description: 'Planejamento e execução para aumentar o engajamento.',
+    icon: <FaChartLine />,
   },
-
   {
     title: 'E-commerce',
     description: 'Loja virtual personalizada para o seu negócio.',
+    icon: <FaShoppingCart />,
   },
   {
     title: 'Branding',
     description: 'Identidade visual para destacar sua marca.',
+    icon: <FaBrush />,
   },
-
   {
     title: 'Marketing Digital',
     description: 'Aumente suas vendas com campanhas eficazes.',
+    icon: <FaBullhorn />,
   },
   {
     title: 'Otimização de Performance',
     description: 'Seu site mais rápido e eficiente.',
+    icon: <FaTachometerAlt />,
   },
 ];
 
 const Services = memo(() => {
   return (
     <div
-      id="sevices"
-      className="flex flex-row flex-wrap justify-evenly bg-gradient-to-b from-blue-200 from-30% to-amber-200 to-10%... p-8 min-h-[600px] "
+      id="services"
+      className="flex flex-col justify-center items-center bg-gradient-to-b from-slate-300 from-30% to-slate-500 to-10%... min-h-screen"
     >
-      <FadingText time={2000}>
-        <section className="bg-rose-800 py-16 rounded-md">
+      <Fading time={2000}>
+        <section className=" w-[90%] max-w-[1400px] py-16 ">
           <div className="container mx-auto px-6">
-            <h2 className="text-4xl font-bold text-center text-white mb-10">
-              Meus Serviços
-            </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14">
               {servicesData.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-white rounded-lg shadow-lg p-6 text-center hover:shadow-xl transition duration-300"
+                  className="bg-white border border-black rounded-lg shadow-md p-6 flex flex-col items-center justify-center h-[250px] w-[250px] transition duration-300"
                 >
-                  <h3 className="text-2xl font-semibold text-blue-600 mb-4">
+                  <div className="text-black text-4xl mb-4">{service.icon}</div>
+                  <h3 className="text-lg font-semibold text-black mb-2">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600">{service.description}</p>
+                  <p className="text-gray-800 text-sm">{service.description}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
-      </FadingText>
+      </Fading>
     </div>
   );
 });

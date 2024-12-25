@@ -6,7 +6,7 @@ import NavMobile from './NavMobile';
 
 const Header = memo(() => {
   return (
-    <header className="bg-blue-50 text-black">
+    <header className="bg-white text-black">
       <div className="container mx-auto px-5 py-4 flex justify-evenly items-center">
         <Logo />
         <NavMobile />

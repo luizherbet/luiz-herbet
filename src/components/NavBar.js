@@ -3,7 +3,7 @@ import React, { memo } from 'react';
 const NavBar = memo(() => {
   return (
     <nav className="hidden md:flex w-[400px] justify-evenly items-center">
-      <a href="#services" className={styles.link}>
+      <a href="#sevices" className={styles.link}>
         Serviços
       </a>
       <a href="#about" className={styles.link}>

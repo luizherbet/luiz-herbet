@@ -28,7 +28,7 @@ const SocialLinks = () => {
         <FaInstagram className="h-6 w-6" />
       </a>
       <a
-        href="https://linkedin.com"
+        href="https://www.linkedin.com/in/luiz-herbet-souza-040369285/"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.link}
