@@ -73,5 +73,3 @@ const NavBar = memo(() => {
 });
 
 export default NavBar;
-
-const style = {};

@@ -9,7 +9,7 @@ const Typing = memo(({ text = 'Digitando um texto', time = 150 }) => {
     }, time);
 
     return () => clearTimeout(timer);
-  }, [type, time]);
+  }, [type, time, text]);
 
   return <div>{type}</div>;
 });
