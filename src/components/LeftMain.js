@@ -14,7 +14,7 @@ const LeftMain = memo(() => {
             Transforme sua presença digital com soluções completas para o seu
             negócio ou marca. Criação de sites profissionais, produção de
             conteúdo para redes sociais, e edição de áudio, imagens e vídeos
-            animados para engajar seu público e impulsionar o seu crescimento
+            animados para engajar seu público e alavancar o seu crescimento
             online.
           </p>
         </Fading>
