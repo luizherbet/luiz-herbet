@@ -5,7 +5,7 @@ const Footer = memo(() => {
     <footer className="bg-gray-900 text-white py-3 w-full">
       <div className="container mx-auto text-center">
         <p className="text-sm">
-          &copy; 2024 Luiz Herbet - Todos os direitos reservados
+          &copy; 2025 Luiz Herbet - Todos os direitos reservados
         </p>
       </div>
     </footer>
