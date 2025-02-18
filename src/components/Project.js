@@ -1,119 +1,128 @@
 import React, { useState } from 'react';
 
-const Project = () => {
+function Project() {
   const [text, setText] = useState('');
   const [start, setStart] = useState('');
   const [end, setEnd] = useState('');
-  const [newText, setNewText] = useState('');
   const [result, setResult] = useState('');
+  const [newText, setNewText] = useState('');
 
-  // Função para substituir o texto
-  const handleReplace = () => {
-    if (start >= 0 && end <= text.length && newText !== '') {
-      const updatedText = text.slice(0, start) + newText + text.slice(end);
-      setText(updatedText);
-      setResult(updatedText);
-    } else {
-      alert('Índices inválidos ou novo texto não fornecido');
-    }
-  };
-
-  // Função para recortar o texto
+  // Função para recortar o texto (exibe o recorte no campo de resultado, mas não modifica o texto original)
   const handleCut = () => {
-    if (start >= 0 && end <= text.length) {
-      setResult(text.slice(start, end));
-      setText(text.slice(0, start) + text.slice(end)); // Remove o trecho recortado
-    } else {
-      alert('Índices inválidos');
+    if (start !== '' && end !== '' && start < end && end <= text.length) {
+      setResult(text.slice(start, end)); // Exibe o trecho recortado no campo de resultado
     }
   };
 
-  // Função para apagar o texto
+  // Função para substituir o texto no intervalo especificado
+  const handleReplace = () => {
+    if (
+      start !== '' &&
+      end !== '' &&
+      start < end &&
+      end <= text.length &&
+      newText !== ''
+    ) {
+      const newTextFinal = text.slice(0, start) + newText + text.slice(end); // Substitui o trecho do texto original
+      setResult(newTextFinal); // Exibe o novo texto no campo de resultado
+    }
+  };
+
+  // Função para apagar o texto no intervalo especificado
   const handleDelete = () => {
-    if (start >= 0 && end <= text.length) {
-      const updatedText = text.slice(0, start) + text.slice(end);
-      setText(updatedText);
-      setResult(updatedText);
-    } else {
-      alert('Índices inválidos');
+    if (start !== '' && end !== '' && start < end && end <= text.length) {
+      const newTextFinal = text.slice(0, start) + text.slice(end); // Apaga o trecho do texto original
+      setResult(newTextFinal); // Exibe o texto sem o trecho apagado
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-yellow-50 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold text-center text-blue-600 mb-4">
+    <div className="p-6 bg-gradient-to-br from-yellow-400 to-yellow-500 rounded-lg shadow-xl max-w-md mx-auto">
+      <h1 className="text-3xl font-bold text-white text-center mb-6">
         Manipulação de Texto
       </h1>
 
-      <div className="mb-4">
-        <textarea
-          placeholder="Digite seu texto aqui"
-          value={text}
-          onChange={e => setText(e.target.value)}
-          rows="6"
-          className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-      </div>
+      {/* Campo de texto original */}
+      <textarea
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="Digite seu texto aqui..."
+        className="w-full h-32 p-4 rounded-md mb-4 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+      />
 
-      <div className="flex flex-col md:flex-row md:space-x-4 mb-4">
+      {/* Campo para o índice de início */}
+      <div className="mb-4">
+        <label className="text-white font-medium">Início (índice):</label>
         <input
-          type="text"
-          placeholder="Índice inicial"
+          type="number"
           value={start}
           onChange={e => setStart(e.target.value)}
-          className="w-full md:w-1/2 p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 rounded-md mt-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          min="0"
         />
+      </div>
+
+      {/* Campo para o índice de fim */}
+      <div className="mb-6">
+        <label className="text-white font-medium">Fim (índice):</label>
         <input
-          type="text"
-          placeholder="Índice final"
+          type="number"
           value={end}
           onChange={e => setEnd(e.target.value)}
-          className="w-full md:w-1/2 p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full p-3 rounded-md mt-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
+          min="0"
         />
       </div>
 
+      {/* Campo para inserir o novo texto para substituição */}
       <div className="mb-4">
+        <label className="text-white font-medium">
+          Novo Texto para Substituição:
+        </label>
         <input
           type="text"
-          placeholder="Novo texto"
           value={newText}
           onChange={e => setNewText(e.target.value)}
-          className="w-full p-3 border-2 border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Digite o novo texto aqui"
+          className="w-full p-3 rounded-md mt-1 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </div>
 
-      <div className="space-x-4 mb-4 text-center">
-        <button
-          onClick={handleReplace}
-          className="px-6 py-2 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-600"
-        >
-          Substituir
-        </button>
+      {/* Botões de ação */}
+      <div className="space-y-4 mb-6">
         <button
           onClick={handleCut}
-          className="px-6 py-2 bg-yellow-500 text-white font-semibold rounded-lg shadow-md hover:bg-yellow-600"
+          className="w-full py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         >
           Recortar
         </button>
+
+        <button
+          onClick={handleReplace}
+          className="w-full py-3 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          Substituir
+        </button>
+
         <button
           onClick={handleDelete}
-          className="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg shadow-md hover:bg-red-600"
+          className="w-full py-3 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
         >
           Apagar
         </button>
       </div>
 
+      {/* Exibe o resultado da operação */}
       <div className="mb-4">
-        <h3 className="text-xl font-bold text-blue-600">Resultado:</h3>
+        <label className="text-white font-medium">Resultado:</label>
         <textarea
           value={result}
           readOnly
-          rows="6"
-          className="w-full p-3 border-2 border-gray-300 rounded-md bg-gray-100 text-gray-700"
+          className="w-full h-32 p-4 rounded-md bg-gray-200 text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-500"
         />
       </div>
     </div>
   );
-};
+}
 
 export default Project;
