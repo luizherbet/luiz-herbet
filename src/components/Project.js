@@ -33,7 +33,7 @@ function Project() {
   return (
     <div className="max-w-4xl mx-auto bg-yellow-100 p-8 rounded-lg shadow-lg">
       <h1 className="text-3xl font-bold text-center mb-6">
-        Manipulação de Texto
+        APRENDO COM A PALAVRA
       </h1>
 
       <div className="mb-4">
