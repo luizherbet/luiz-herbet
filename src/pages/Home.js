@@ -1,13 +1,18 @@
 import React, { memo } from 'react';
-import Project from '../components/Project';
-import TextEncryptor from '../components/TextEncryptor';
+import Header from '../components/Header';
+import Main from '../components/Main'
+import Services from '../components/Services'
+import Card from '../components/Card'
+
 import Footer from '../components/Footer';
 
 const Home = memo(() => {
   return (
     <div>
-      <Project />
-      <TextEncryptor />
+      <Header />
+      <Main />
+      <Services />
+      <Card />
       <Footer />
     </div>
   );
