@@ -2,12 +2,12 @@ import React, { memo } from 'react';
 
 const NavBar = memo(() => {
   return (
-    <nav className="hidden md:flex w-[400px] justify-evenly items-center">
+    <nav className="hidden md:flex w-[450px] justify-evenly items-center">
       <a href="#services" className={styles.link}>
         Serviços
       </a>
-      <a href="#about" className={styles.link}>
-        Sobre
+      <a href="#clients" className={styles.link}>
+        Clientes
       </a>
       <a href="#contact" className={styles.link}>
         Contato

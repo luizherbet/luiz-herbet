@@ -49,24 +49,35 @@ const Services = memo(() => {
   return (
     <div
       id="services"
-      className="flex flex-col justify-center items-center bg-gradient-to-b from-slate-300 from-30% to-slate-500 to-10%... h-auto"
+      className="flex flex-col justify-center items-center bg-gradient-to-b from-slate-200 from-15% via-slate-300 via-35% to-slate-400 to-75% py-24 md:py-28"
     >
       <Fading time={2000}>
-        <section className="w-[90%] max-w-[1400px] py-16">
-          <div className="container mx-auto px-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-14">
+        <section className="w-full max-w-[1400px] mx-auto">
+          <div className="px-6 md:px-8">
+            {/* Título da Seção */}
+            <div className="text-center mb-16 md:mb-20">
+              <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-5">
+                Nossos Serviços
+              </h2>
+              <p className="text-lg md:text-xl text-gray-800 max-w-2xl mx-auto leading-relaxed">
+                Soluções completas para transformar sua presença digital
+              </p>
+              <div className="w-32 h-1.5 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto mt-6 rounded-full"></div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 justify-items-center items-center mx-auto max-w-6xl pt-8">
               {servicesData.map((service, index) => (
                 <div
                   key={index}
-                  className="bg-white border border-black rounded-lg shadow-md p-6 flex flex-col items-center justify-center h-[250px] w-[250px] transition-all duration-300 transform hover:scale-110 hover:bg-indigo-100 hover:text-indigo-600"
+                  className="bg-white border border-gray-200 rounded-2xl shadow-lg p-8 md:p-10 flex flex-col items-center justify-center min-h-[300px] w-full max-w-[340px] mx-auto transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:border-indigo-400 group"
                 >
-                  <div className="text-black text-4xl mb-4 transition-colors duration-300 hover:text-indigo-600">
+                  <div className="text-indigo-600 text-5xl mb-6 transition-all duration-300 group-hover:scale-110 group-hover:text-indigo-700">
                     {service.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-black mb-2 transition-colors duration-300 hover:text-indigo-600">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 transition-colors duration-300 group-hover:text-indigo-600">
                     {service.title}
                   </h3>
-                  <p className="text-gray-800 text-sm transition-colors duration-300 hover:text-indigo-600">
+                  <p className="text-gray-600 text-center text-sm leading-relaxed">
                     {service.description}
                   </p>
                 </div>
