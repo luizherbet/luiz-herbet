@@ -27,12 +27,12 @@ const Main = memo(() => {
   }, []);
 
   return (
-    <main className="bg-white rounded-xl min-h-[450px] flex flex-wrap justify-evenly w-sm:justify-center items-center gap-y-6 px-6">
+    <main className="bg-white rounded-xl min-h-[450px] flex flex-wrap justify-around items-center gap-y-6 px-4 md:px-6">
       {/* TEXTO SLIDE */}
-      <div>
+      <div className="flex flex-col items-center">
         <div
-          className={`mt-6 w-[350px] h-[250px]
-                      text-4xl 
+          className={`mt-6 w-full max-w-[350px] min-h-[250px] flex items-center justify-center text-center
+                      text-3xl md:text-4xl 
                       font-semibold 
                       leading-snug 
                       transition-all duration-500
@@ -45,24 +45,18 @@ const Main = memo(() => {
         >
           {textos[index]}
         </div>
-        <button
-          className="
-  bg-blue-900 
-  text-white 
-  text-[20px] 
-  px-5 
-  py-3 
-  rounded-xl
-  hover:bg-black
-  transition
-"
+        <a
+          href="https://wa.me/554599947050"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="bg-blue-900 text-white text-lg md:text-[20px] px-5 py-3 rounded-xl hover:bg-blue-800 transition-all duration-300 mt-4 mx-auto"
         >
           Entre em contato!
-        </button>
+        </a>
       </div>
 
       {/* VÍDEO */}
-      <div className="w-[350px]">
+      <div className="w-full max-w-[350px]">
         <video
           autoPlay
           loop
