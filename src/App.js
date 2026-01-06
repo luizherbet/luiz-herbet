@@ -12,7 +12,7 @@ import Home from './pages/Home';
 function App() {
   return (
     <Router>
-      <div className="scroll-smooth exo-2-font bg-gradient-to-b from-blue-50 to-orange-100">
+      <div className="scroll-smooth exo-2-font bg-gradient-to-b from-blue-50 to-orange-100 pl-2 pr-2">
         <Routes>
           <Route path="/" element={<Home />} />
           {/* Descomente as linhas abaixo para outras rotas */}
