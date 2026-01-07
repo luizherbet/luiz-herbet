@@ -2,30 +2,33 @@ import { FaFacebook, FaXing, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const SocialLinks = () => {
   return (
-    <div className="hidden md:flex space-x-4 mr-3">
+    <div className="flex space-x-3 md:space-x-4 mr-2">
       <a
         href="https://www.linkedin.com/in/luiz-herbet-souza-040369285/"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.link}
+        aria-label="LinkedIn"
       >
-        <FaLinkedin className="h-6 w-6" />
+        <FaLinkedin className="h-5 w-5 md:h-6 md:w-6" />
       </a>
       <a
         href="https://instagram.com"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.link}
+        aria-label="Instagram"
       >
-        <FaInstagram className="h-6 w-6" />
+        <FaInstagram className="h-5 w-5 md:h-6 md:w-6" />
       </a>
       <a
         href="https://facebook.com"
         target="_blank"
         rel="noopener noreferrer"
         className={styles.link}
+        aria-label="Facebook"
       >
-        <FaFacebook className="h-6 w-6" />
+        <FaFacebook className="h-5 w-5 md:h-6 md:w-6" />
       </a>
     </div>
   );
