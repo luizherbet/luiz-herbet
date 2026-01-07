@@ -5,10 +5,10 @@ import Fading from './Fading';
 
 const textos = [
   "Você precisa de uma página web para sua empresa ou negócio?",
-  "Um site responsivo, adaptado para mobile, tablet e desktop.",
-  "Landing pages, catálogos online, newsletters e chatbots.",
-  "Aplicações web completas com front-end, back-end e banco de dados.",
-  "Conteúdo digital com áudio e vídeo para redes sociais.",
+  "Um site responsivo, adaptado para mobile, tablet e desktop?",
+  "Landing pages, catálogos online, newsletters e chatbots?",
+  "Aplicações web completas com front-end, back-end e banco de dados?",
+  "Conteúdo digital com áudio e vídeo para redes sociais?",
 ];
 
 const Main = memo(() => {
@@ -50,7 +50,7 @@ const Main = memo(() => {
           {textos[index]}
         </div>
         <a
-          href="https://wa.me/554599947050"
+          href="https://wa.me/554598511412"
           target="_blank"
           rel="noopener noreferrer"
           className="bg-blue-900 text-white text-lg md:text-[20px] px-5 py-3 rounded-xl hover:bg-blue-800 transition-all duration-300 mt-4 mx-auto"
