@@ -1,5 +1,7 @@
 {
-  "name": "Luiz Herbet - Soluções Digitais",
+  "short_name": "Luiz Herbet",
+  "name": "Luiz Herbet - Desenvolvedor Web & Criador de Conteúdo Digital",
+  "description": "Desenvolvedor Full Stack especializado em criação de sites, aplicações web, gestão de redes sociais e edição de conteúdo digital",
   "icons": [
     {
       "src": "favicon.ico",
@@ -19,6 +21,8 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#1e3a8a",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity", "developer"]
 }
