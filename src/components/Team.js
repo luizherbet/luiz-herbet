@@ -24,17 +24,20 @@ const Team = memo(() => {
   return (
     <div
       id="team"
-      className="bg-gradient-to-b from-lime-100 to-violet-100 rounded-xl mt-8 w-full py-12 md:py-16"
+      className="bg-gradient-to-b from-stone-200 to-violet-100 rounded-xl mt-8 w-full py-12 md:py-16"
     >
       <Fading time={1500}>
-        <h1 className="text-4xl md:text-5xl text-blue-900 mb-8 flex justify-center">
+        <h1 className="text-5xl text-blue-900 mb-2 flex justify-center">
           Equipe
         </h1>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 px-6 md:px-12 justify-items-center max-w-6xl mx-auto">
+        <p className="text-lg text-blue-800 text-center mb-[50px] max-w-2xl mx-auto px-6">
+          Profissionais especializados prontos para transformar suas ideias em realidade
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12 px-6 md:px-12 justify-items-center max-w-[900px] mx-auto">
           {team.map((member) => (
             <div
               key={member.id}
-              className="bg-white rounded-2xl shadow-lg p-8 md:p-10 w-full max-w-[450px] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl"
+              className="bg-white rounded-2xl p-8 md:p-10 md:w-[400px] sm:w-[200px]"
             >
               <div className="flex flex-col items-center text-center">
                 <div className="mb-6">

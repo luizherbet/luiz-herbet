@@ -9,9 +9,12 @@ const Clients = memo(() => {
       className="mt-1 py-16"
     >
       <Fading time={1500}>
-        <h1 className="text-4xl md:text-5xl text-blue-900 mb-8 flex justify-center">
+        <h1 className="text-4xl md:text-5xl text-blue-900 mb-4 flex justify-center">
           Portfólio
         </h1>
+        <p className="text-lg text-blue-800 text-center mb-8 max-w-2xl mx-auto px-6">
+          Conheça alguns dos projetos que desenvolvemos com excelência e dedicação
+        </p>
         <div className="flex justify-center px-6">
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full max-w-[500px] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl">
             <div className="w-full h-64 md:h-80 overflow-hidden">
