@@ -1,6 +1,64 @@
 import React, { memo } from 'react';
 import Fading from './Fading';
-import portfolio01 from '../assets/img/portfolio01.png';
+import portfolio01 from '../assets/img/portfolio/portfolio01.png';
+import capturaTela from '../assets/img/portfolio/Captura de Tela 2024-12-27 às 13.41.21.png';
+import brownFlyer from '../assets/img/portfolio/Brown Classic Wellness Flyer.jpg';
+import panfleto from '../assets/img/portfolio/Panfleto cursos profissionalizantes geométrico amarelo e azul.jpg';
+import unnamed from '../assets/img/portfolio/unnamed.jpg';
+import workshop from '../assets/img/portfolio/Workshop Estado, Capacidades Estatais e Desenvolvimento Uma abordagem interdisciplinar.jpg';
+import videoPortfolio from '../assets/img/portfolio/Terça, 09 Dezembro de 2025.mp4';
+
+const portfolioData = [
+  {
+    id: 1,
+    title: 'Lua Ambiental',
+    description: 'Landing Page com serviço de newsletters.',
+    image: portfolio01,
+    type: 'image',
+  },
+  {
+    id: 2,
+    title: 'Rafa Moraes',
+    description: 'Logomarca.',
+    image: capturaTela,
+    type: 'image',
+  },
+  {
+    id: 3,
+    title: 'Workshop Estado e Desenvolvimento',
+    description: 'Folder com material acadêmico sobre capacidades estatais.',
+    image: brownFlyer,
+    type: 'image',
+  },
+  {
+    id: 4,
+    title: 'Hotel Coroados',
+    description: 'Folder para impressão.',
+    image: panfleto,
+    type: 'image',
+  },
+  {
+    id: 5,
+    title: 'Desenvolvimento em Debate',
+    description: 'Diagramação e design da revista científica.',
+    image: unnamed,
+    type: 'image',
+  },
+  {
+    id: 6,
+    title: 'Workshop Estado e Desenvolvimento',
+    description: 'Folder com material acadêmico sobre capacidades estatais.',
+    image: workshop,
+    type: 'image',
+  },
+  {
+    id: 7,
+    title: 'Luar Ambiental',
+    description: 'Post com audio e video para redes sociais.',
+    video: videoPortfolio,
+    type: 'video',
+  },
+];
 
 const Clients = memo(() => {
   return (
@@ -15,24 +73,47 @@ const Clients = memo(() => {
         <p className="text-lg text-blue-800 text-center mb-8 max-w-2xl mx-auto px-6">
           Conheça alguns dos projetos que desenvolvemos com excelência e dedicação
         </p>
-        <div className="flex justify-center px-6">
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full max-w-[500px] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl">
-            <div className="w-full h-64 md:h-80 overflow-hidden">
-              <img
-                src={portfolio01}
-                alt="Lua Ambiental"
-                className="w-full h-full object-cover"
-              />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-6 justify-items-center max-w-6xl mx-auto">
+          {portfolioData.map((item) => (
+            <div
+              key={item.id}
+              className="bg-white rounded-2xl overflow-hidden w-full max-w-[400px] transition-all duration-300 transform hover:scale-[1.02] hover:shadow-2xl"
+            >
+              {/* Imagem */}
+              {item.type === 'image' && (
+                <div className="w-full h-64 md:h-80 overflow-hidden bg-gray-100 flex items-center justify-center">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-contain"
+                  />
+                </div>
+              )}
+              
+              {/* Vídeo */}
+              {item.type === 'video' && (
+                <div className="w-full h-64 md:h-80 overflow-hidden bg-black">
+                  <video
+                    controls
+                    className="w-full h-full object-contain"
+                    preload="metadata"
+                  >
+                    <source src={item.video} type="video/mp4" />
+                    Seu navegador não suporta o elemento de vídeo.
+                  </video>
+                </div>
+              )}
+              
+              <div className="p-6 md:p-8 text-center">
+                <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-3">
+                  {item.title}
+                </h3>
+                <p className="text-gray-600 text-sm md:text-base leading-relaxed">
+                  {item.description}
+                </p>
+              </div>
             </div>
-            <div className="p-6 md:p-8 text-center">
-              <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-3">
-                Lua Ambiental
-              </h3>
-              <p className="text-gray-600 text-sm md:text-base leading-relaxed">
-                Landing Page com serviço de newsletters.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </Fading>
     </div>
