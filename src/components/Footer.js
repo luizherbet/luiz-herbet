@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 const Footer = memo(() => {
   return (
-    <footer className="bg-white text-gray-900 rounded-t-xl mt-8 w-full py-10">
+    <footer className="bg-white text-gray-900 rounded-t-xl mt-8 w-full py-6">
       <div className="mx-auto max-w-7xl px-6 w-full">
         {/* Seção Principal */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 p-3">
@@ -15,7 +15,7 @@ const Footer = memo(() => {
                 className="text-gray-700 hover:text-blue-900 transition-colors flex items-center justify-center md:justify-start group"
               >
                 <span className="mr-3 text-lg">📞</span>
-                <span className="group-hover:underline">(45) 9994-7050</span>
+                <span className="group-hover:underline">(45) 9851-1412</span>
               </a>
               <a 
                 href="mailto:luizherbetsouza@gmail.com" 
@@ -68,10 +68,10 @@ const Footer = memo(() => {
         </div>
 
         {/* Linha divisória */}
-        <div className="border-t border-gray-300 pt-8">
+        <div className="border-t border-gray-300 pt-6">
           <div className="text-center">
             <p className="text-sm md:text-base font-medium text-gray-800 ">
-              &copy; 2025 Luiz Herbet - Todos os direitos reservados
+              &copy; 2026 Luiz Herbet - Todos os direitos reservados
             </p>
           </div>
         </div>
