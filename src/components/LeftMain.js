@@ -31,7 +31,7 @@ const LeftMain = memo(() => {
       <Fading time={1200}>
         <div className="w-full flex justify-center">
           <a
-            href="https://wa.me/554599947050"
+            href="https://wa.me/554599947050?text=Olá!%20Gostaria%20de%20saber%20mais%20sobre%20seus%20serviços%20de%20desenvolvimento%20web%20e%20criação%20de%20conteúdo%20digital."
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block bg-gradient-to-r from-indigo-600 to-blue-600 text-white px-10 py-4 rounded-xl text-lg font-semibold hover:from-indigo-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"

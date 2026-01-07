@@ -50,7 +50,7 @@ const Main = memo(() => {
           {textos[index]}
         </div>
         <a
-          href="https://wa.me/554598511412"
+          href="https://wa.me/554598511412?text=Olá!%20Tenho%20interesse%20em%20conhecer%20suas%20soluções%20digitais%20e%20gostaria%20de%20solicitar%20um%20orçamento."
           target="_blank"
           rel="noopener noreferrer"
           className="bg-blue-900 text-white text-lg md:text-[20px] px-5 py-3 rounded-xl hover:bg-blue-800 transition-all duration-300 mt-4 mx-auto"

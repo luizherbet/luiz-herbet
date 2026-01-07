@@ -57,7 +57,7 @@ const Footer = memo(() => {
               Entre em contato e descubra como podemos ajudar seu negócio
             </p>
             <a
-              href="https://wa.me/554598511412"
+              href="https://wa.me/554598511412?text=Olá!%20Gostaria%20de%20conversar%20sobre%20como%20vocês%20podem%20ajudar%20meu%20negócio%20a%20crescer%20digitalmente."
               target="_blank"
               rel="noopener noreferrer"
               className="bg-gradient-to-r from-blue-900 to-indigo-900 text-white px-6 py-3 rounded-xl font-semibold hover:from-blue-800 hover:to-indigo-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-95 inline-block text-center w-full md:w-auto"

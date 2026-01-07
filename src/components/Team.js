@@ -31,7 +31,7 @@ const Team = memo(() => {
           Equipe
         </h1>
         <p className="text-lg text-blue-800 text-center mb-[50px] max-w-2xl mx-auto px-6">
-          Profissionais especializados prontos para transformar suas ideias em realidade
+          Conheça um pouco do perfil profissional da nossa equipe.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-12 px-6 md:px-12 justify-items-center max-w-[900px] mx-auto">
           {team.map((member) => (

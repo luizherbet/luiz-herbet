@@ -6,6 +6,7 @@ import brownFlyer from '../assets/img/portfolio/Brown Classic Wellness Flyer.jpg
 import panfleto from '../assets/img/portfolio/Panfleto cursos profissionalizantes geométrico amarelo e azul.jpg';
 import unnamed from '../assets/img/portfolio/unnamed.jpg';
 import workshop from '../assets/img/portfolio/Workshop Estado, Capacidades Estatais e Desenvolvimento Uma abordagem interdisciplinar.jpg';
+import oito from '../assets/img/portfolio/oito.png';
 import videoPortfolio from '../assets/img/portfolio/Terça, 09 Dezembro de 2025.mp4';
 
 const portfolioData = [
@@ -53,6 +54,13 @@ const portfolioData = [
   },
   {
     id: 7,
+    title: 'OitO',
+    description: 'Aplicação full stack para agendamento de profissionais independentes.',
+    image: oito,
+    type: 'image',
+  },
+  {
+    id: 8,
     title: 'Luar Ambiental',
     description: 'Post com audio e video para redes sociais.',
     video: videoPortfolio,
@@ -70,8 +78,8 @@ const Clients = memo(() => {
         <h1 className="text-4xl md:text-5xl text-blue-900 mb-4 flex justify-center">
           Portfólio
         </h1>
-        <p className="text-lg text-blue-800 text-center mb-8 max-w-2xl mx-auto px-6">
-          Conheça alguns dos projetos que desenvolvemos com excelência e dedicação
+        <p className="text-lg text-blue-800 text-center mb-[70px] max-w-2xl mx-auto px-6">
+          Conheça alguns dos projetos que desenvolvemos com dedicação
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-6 justify-items-center max-w-6xl mx-auto">
           {portfolioData.map((item) => (
