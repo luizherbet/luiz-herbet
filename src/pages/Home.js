@@ -6,6 +6,7 @@ import Clients from '../components/Clients';
 import Card from '../components/Card';
 
 import Footer from '../components/Footer';
+import Team from '../components/Team';
 
 const Home = memo(() => {
   return (
@@ -14,7 +15,7 @@ const Home = memo(() => {
       <Main />
       <Services />
       <Clients />
-      <Card />
+      <Team/>
       <Footer />
     </div>
   );

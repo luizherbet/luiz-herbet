@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useState } from "react";
 import video from "../assets/img/left.mp4";
+import Fading from './Fading';
+
 
 const textos = [
   "Você precisa de uma página web para sua empresa ou negócio?",
@@ -27,8 +29,10 @@ const Main = memo(() => {
   }, []);
 
   return (
+    <Fading time={500}>
     <main className="bg-white rounded-xl min-h-[450px] flex flex-wrap justify-around items-center gap-y-6 px-4 md:px-6">
       {/* TEXTO SLIDE */}
+      
       <div className="flex flex-col items-center">
         <div
           className={`mt-6 w-full max-w-[350px] min-h-[250px] flex items-center justify-center text-center
@@ -54,6 +58,7 @@ const Main = memo(() => {
           Entre em contato!
         </a>
       </div>
+      
 
       {/* VÍDEO */}
       <div className="w-full max-w-[350px]">
@@ -69,6 +74,7 @@ const Main = memo(() => {
         </video>
       </div>
     </main>
+    </Fading>
   );
 });
 
