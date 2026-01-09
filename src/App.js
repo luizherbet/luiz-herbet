@@ -2,6 +2,7 @@ import './App.css';
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
+import LabLanguage from './pages/LabLanguage';
 
 // Importações para outras páginas (descomentadas conforme necessário)
 // import About from './pages/About';
@@ -15,6 +16,7 @@ function App() {
       <div className="scroll-smooth exo-2-font bg-gradient-to-b from-blue-50 to-orange-100 pl-2 pr-2">
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/lab/:language" element={<LabLanguage />} />
           {/* Descomente as linhas abaixo para outras rotas */}
           {/* <Route path="/about" element={<About />} />
         <Route path="/books" element={<Books />} />

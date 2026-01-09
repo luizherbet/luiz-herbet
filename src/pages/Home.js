@@ -2,9 +2,8 @@ import React, { memo } from 'react';
 import Header from '../components/Header';
 import Main from '../components/Main';
 import Services from '../components/Services';
+import Lab from '../components/Lab';
 import Clients from '../components/Clients';
-import Card from '../components/Card';
-
 import Footer from '../components/Footer';
 import Team from '../components/Team';
 
@@ -14,6 +13,7 @@ const Home = memo(() => {
       <Header />
       <Main />
       <Services />
+      <Lab />
       <Clients />
       <Team/>
       <Footer />
