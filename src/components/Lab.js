@@ -80,7 +80,7 @@ const Lab = memo(() => {
         <p className="text-lg text-blue-800 text-center mb-[70px] max-w-2xl mx-auto px-6">
           Diário de bordo com documentação dos meus estudos e aprendizados em diferentes tecnologias
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-11 justify-items-center max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 px-16 justify-items-center max-w-6xl mx-auto">
           {languages.map((language) => (
             <div
               key={language.id}

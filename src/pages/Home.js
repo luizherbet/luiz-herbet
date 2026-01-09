@@ -13,8 +13,8 @@ const Home = memo(() => {
       <Header />
       <Main />
       <Services />
-      <Lab />
       <Clients />
+      <Lab />
       <Team/>
       <Footer />
     </div>
