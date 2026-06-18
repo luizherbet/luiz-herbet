@@ -16,14 +16,14 @@ export const profile = {
   name: 'Luiz Pipa',
   photo: foto,
   tagline: 'Música · Literatura · Artes visuais',
-  bio: 'Artista entre sons, palavras e cores. Neste espaço você encontra o disco Nas entrelinhas, o livro e a coleção de pinturas.',
+  bio: 'Entre sons, palavras e cores. Neste espaço você encontra o disco Nas entrelinhas, o livro e a coleção de pinturas.',
 };
 
 export const album = {
   title: 'Nas entrelinhas',
   year: 2026,
   description:
-    'Canções que habitam o espaço entre o dito e o sentido — memória, mar e imaginação.',
+    'Canções que habitam o espaço entre o dito, o não dito e o sentido.',
   cover: capaDisco,
   tracks: [
     {
@@ -47,56 +47,48 @@ export const paintings = [
   {
     id: 1,
     title: 'O flautista e a pipa',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro01,
   },
   {
     id: 2,
     title: 'Rosto sob a lua',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro02,
   },
   {
     id: 3,
     title: 'Casa e pipa',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro03,
   },
   {
     id: 4,
     title: 'A janela e a multidão',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro04,
   },
   {
     id: 5,
     title: 'Composição abstrata',
-    year: 2026,
     technique: 'Mista sobre tela',
     image: quadro05,
   },
   {
     id: 6,
     title: 'Barco e sol',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro06,
   },
   {
     id: 7,
     title: 'Quadrados e linha',
-    year: 2026,
     technique: 'Desenho a lápis e cor',
     image: quadro07,
   },
   {
     id: 8,
     title: 'Pipas e janelas',
-    year: 2026,
     technique: 'Óleo sobre tela',
     image: quadro08,
   },

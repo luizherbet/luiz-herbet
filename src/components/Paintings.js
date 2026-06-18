@@ -33,9 +33,7 @@ const Paintings = memo(() => {
                 <h3 className="text-lg font-medium text-stone-900 mb-1">
                   {item.title}
                 </h3>
-                <p className="text-sm text-stone-500">
-                  {item.technique} · {item.year}
-                </p>
+                <p className="text-sm text-stone-500">{item.technique}</p>
               </div>
             </article>
           ))}

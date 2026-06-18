@@ -14,7 +14,7 @@ const SocialLinks = () => {
         <FaInstagram className="h-5 w-5" />
       </a>
       <a
-        href="https://www.youtube.com/@LuizPipa"
+        href="https://www.youtube.com/@LuizHPipa"
         target="_blank"
         rel="noopener noreferrer"
         className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
