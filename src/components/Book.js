@@ -65,7 +65,7 @@ const Book = memo(() => {
                 rel="noopener noreferrer"
                 className="border border-amber-700 text-amber-900 px-6 py-3 rounded-full text-sm font-medium hover:bg-amber-100 transition-colors"
               >
-                Comprar na Amazon
+                Amazon
               </a>
             </div>
           </div>
