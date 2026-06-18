@@ -1,41 +1,28 @@
-import { FaFacebook, FaXing, FaInstagram, FaLinkedin } from "react-icons/fa";
+import { FaInstagram, FaSpotify } from 'react-icons/fa';
 
 const SocialLinks = () => {
   return (
-    <div className="flex space-x-3 md:space-x-4 mr-2">
-      <a
-        href="https://www.linkedin.com/in/luiz-herbet-souza-040369285/"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={styles.link}
-        aria-label="LinkedIn"
-      >
-        <FaLinkedin className="h-5 w-5 md:h-6 md:w-6" />
-      </a>
+    <div className="flex space-x-4">
       <a
         href="https://instagram.com"
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.link}
+        className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
         aria-label="Instagram"
       >
-        <FaInstagram className="h-5 w-5 md:h-6 md:w-6" />
+        <FaInstagram className="h-5 w-5" />
       </a>
       <a
-        href="https://facebook.com"
+        href="https://open.spotify.com"
         target="_blank"
         rel="noopener noreferrer"
-        className={styles.link}
-        aria-label="Facebook"
+        className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
+        aria-label="Spotify"
       >
-        <FaFacebook className="h-5 w-5 md:h-6 md:w-6" />
+        <FaSpotify className="h-5 w-5" />
       </a>
     </div>
   );
 };
 
 export default SocialLinks;
-
-const styles = {
-  link: '"text-black hover:text-blue-900 hover:scale-110 hover:transition-all',
-};
