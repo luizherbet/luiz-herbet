@@ -88,6 +88,12 @@ export const album = {
       duration: 'em breve',
       available: false,
     },
+    {
+      id: 11,
+      title: 'Poetas',
+      duration: 'em breve',
+      available: false,
+    },
   ],
 };
 
