@@ -1,7 +1,6 @@
 # https://www.robotstxt.org/robotstxt.html
 User-agent: *
 Allow: /
-Disallow: /api/
 
 # Sitemap
-Sitemap: https://www.luizherbet.com.br/sitemap.xml
+Sitemap: https://www.luizpipa.com.br/sitemap.xml

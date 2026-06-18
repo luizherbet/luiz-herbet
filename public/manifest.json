@@ -1,7 +1,8 @@
 {
   "short_name": "Luiz Pipa",
-  "name": "Luiz Pipa — Disco, Livro e Quadros",
-  "description": "Site oficial de Luiz Pipa. Música, literatura e artes visuais.",
+  "name": "Luiz Pipa — Artista",
+  "description": "Site oficial do artista Luiz Pipa (@pipaluiz). Músico, poeta e pintor brasileiro.",
+  "lang": "pt-BR",
   "icons": [
     {
       "src": "pipa.svg",
@@ -10,7 +11,8 @@
       "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "theme_color": "#292524",
   "background_color": "#faf7f2",

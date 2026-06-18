@@ -7,43 +7,140 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#292524" />
 
-    <title>Luiz Pipa | Disco, Livro e Quadros</title>
-    <meta name="title" content="Luiz Pipa | Disco, Livro e Quadros" />
+    <title>Luiz Pipa | Artista — Música, Poesia e Artes Visuais</title>
+    <meta name="title" content="Luiz Pipa | Artista — Música, Poesia e Artes Visuais" />
     <meta
       name="description"
-      content="Site oficial de Luiz Pipa. Ouça o disco online, conheça o livro e explore a coleção de quadros — música, literatura e artes visuais."
+      content="Luiz Pipa é artista brasileiro multidisciplinar — músico, poeta e pintor. Site oficial com disco, livro Nas Entrelinhas, quadros e pinturas. Siga @pipaluiz."
     />
     <meta name="author" content="Luiz Pipa" />
     <meta
       name="keywords"
-      content="Luiz Pipa, música, disco, álbum, livro, literatura, quadros, pintura, artes visuais, artista brasileiro"
+      content="Luiz Pipa, pipaluiz, artista, artista brasileiro, artista multidisciplinar, músico, poeta, pintor, compositor, poesia, música, pintura, artes visuais, Nas Entrelinhas, quadros, disco"
     />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="https://www.luizpipa.com.br" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://www.luizpipa.com.br/" />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Luiz Pipa | Disco, Livro e Quadros" />
+    <meta property="og:type" content="profile" />
+    <meta property="profile:username" content="pipaluiz" />
+    <meta property="og:url" content="https://www.luizpipa.com.br/" />
+    <meta property="og:title" content="Luiz Pipa | Artista — Música, Poesia e Artes Visuais" />
     <meta
       property="og:description"
-      content="Ouça o disco, leia sobre o livro e veja os quadros de Luiz Pipa."
+      content="Artista brasileiro entre sons, palavras e cores. Música, poesia e pintura de Luiz Pipa em um só lugar."
     />
+    <meta property="og:image" content="https://www.luizpipa.com.br/media/artist/luiz-pipa.jpg" />
+    <meta property="og:image:alt" content="Luiz Pipa — artista, músico, poeta e pintor" />
     <meta property="og:locale" content="pt_BR" />
     <meta property="og:site_name" content="Luiz Pipa" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Luiz Pipa | Disco, Livro e Quadros" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Luiz Pipa | Artista — Música, Poesia e Artes Visuais" />
     <meta
-      property="twitter:description"
-      content="Música, literatura e artes visuais em um só lugar."
+      name="twitter:description"
+      content="Artista brasileiro — músico, poeta e pintor. Disco, livro e quadros de Luiz Pipa."
     />
+    <meta name="twitter:image" content="https://www.luizpipa.com.br/media/artist/luiz-pipa.jpg" />
+    <meta name="twitter:creator" content="@pipaluiz" />
 
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "Person",
-      "name": "Luiz Pipa",
-      "description": "Artista — música, literatura e artes visuais",
-      "email": "luizherbetsouza@gmail.com"
+      "@graph": [
+        {
+          "@type": ["Person", "VisualArtist"],
+          "@id": "https://www.luizpipa.com.br/#person",
+          "name": "Luiz Pipa",
+          "alternateName": ["pipaluiz", "Luiz Gustavo Baptista Madeira Pipa"],
+          "url": "https://www.luizpipa.com.br",
+          "image": "https://www.luizpipa.com.br/media/artist/luiz-pipa.jpg",
+          "email": "luizherbetsouza@gmail.com",
+          "jobTitle": "Artista multidisciplinar",
+          "description": "Artista brasileiro — músico, poeta e pintor. Trabalha entre música, literatura e artes visuais.",
+          "nationality": {
+            "@type": "Country",
+            "name": "Brasil"
+          },
+          "knowsAbout": [
+            "Música brasileira",
+            "Poesia",
+            "Pintura",
+            "Artes visuais",
+            "Composição musical"
+          ],
+          "hasOccupation": [
+            { "@type": "Occupation", "name": "Músico" },
+            { "@type": "Occupation", "name": "Poeta" },
+            { "@type": "Occupation", "name": "Pintor" }
+          ],
+          "sameAs": [
+            "https://www.instagram.com/pipaluiz/",
+            "https://www.youtube.com/@LuizPipa",
+            "https://www.amazon.com.br/dp/B0H47YWF2T"
+          ],
+          "mainEntityOfPage": { "@id": "https://www.luizpipa.com.br/#webpage" }
+        },
+        {
+          "@type": "ProfilePage",
+          "@id": "https://www.luizpipa.com.br/#webpage",
+          "url": "https://www.luizpipa.com.br/",
+          "name": "Luiz Pipa — Artista",
+          "description": "Portfólio oficial do artista Luiz Pipa: música, poesia e pintura.",
+          "inLanguage": "pt-BR",
+          "primaryImageOfPage": "https://www.luizpipa.com.br/media/artist/luiz-pipa.jpg",
+          "about": { "@id": "https://www.luizpipa.com.br/#person" },
+          "isPartOf": { "@id": "https://www.luizpipa.com.br/#website" }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://www.luizpipa.com.br/#website",
+          "url": "https://www.luizpipa.com.br",
+          "name": "Luiz Pipa",
+          "description": "Site oficial do artista Luiz Pipa.",
+          "inLanguage": "pt-BR",
+          "publisher": { "@id": "https://www.luizpipa.com.br/#person" }
+        },
+        {
+          "@type": "Book",
+          "name": "Nas Entrelinhas",
+          "author": { "@id": "https://www.luizpipa.com.br/#person" },
+          "creator": { "@id": "https://www.luizpipa.com.br/#person" },
+          "bookFormat": "https://schema.org/EBook",
+          "inLanguage": "pt-BR",
+          "genre": "Poesia",
+          "numberOfPages": 74,
+          "datePublished": "2026-06-09",
+          "url": "https://www.luizpipa.com.br/livro",
+          "image": "https://www.luizpipa.com.br/media/livro/capa.jpg",
+          "offers": {
+            "@type": "Offer",
+            "url": "https://www.amazon.com.br/dp/B0H47YWF2T",
+            "priceCurrency": "BRL",
+            "availability": "https://schema.org/InStock"
+          }
+        },
+        {
+          "@type": "MusicAlbum",
+          "name": "Nas entrelinhas",
+          "byArtist": { "@id": "https://www.luizpipa.com.br/#person" },
+          "datePublished": "2026",
+          "genre": "Música brasileira",
+          "url": "https://www.luizpipa.com.br/#disco",
+          "numTracks": 2,
+          "track": [
+            { "@type": "MusicRecording", "name": "Entrelinhas", "byArtist": { "@id": "https://www.luizpipa.com.br/#person" }, "position": 1 },
+            { "@type": "MusicRecording", "name": "Navegante", "byArtist": { "@id": "https://www.luizpipa.com.br/#person" }, "position": 2 }
+          ]
+        },
+        {
+          "@type": "VisualArtwork",
+          "name": "Quadros de Luiz Pipa",
+          "creator": { "@id": "https://www.luizpipa.com.br/#person" },
+          "artform": "Pintura",
+          "url": "https://www.luizpipa.com.br/#quadros"
+        }
+      ]
     }
     </script>
 

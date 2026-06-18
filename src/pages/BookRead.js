@@ -4,8 +4,16 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Fading from '../components/Fading';
 import { book } from '../data/book';
+import { usePageMeta } from '../hooks/usePageMeta';
 
 const BookRead = memo(() => {
+  usePageMeta({
+    title: 'Nas Entrelinhas — Livro de poesia do artista Luiz Pipa',
+    description:
+      'Leia o livro de poesia Nas Entrelinhas, do artista Luiz Pipa. Obra em seis partes — Palavrear, Janelas, As Pipas, Emaranhados, As Musas e As Chuvas.',
+    canonical: 'https://www.luizpipa.com.br/livro',
+  });
+
   return (
     <div className="max-w-[1100px] mx-auto min-h-screen flex flex-col">
       <Header />
