@@ -22,23 +22,11 @@ const Paintings = memo(() => {
               key={item.id}
               className="group rounded-xl overflow-hidden bg-stone-50"
             >
-              <div className="aspect-[4/5] overflow-hidden bg-stone-200">
+              <div className="aspect-[4/5] overflow-hidden bg-stone-200 flex items-center justify-center">
                 <img
                   src={item.image}
                   alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.parentElement.classList.add(
-                      'flex',
-                      'items-center',
-                      'justify-center',
-                      'bg-gradient-to-br',
-                      'from-stone-200',
-                      'to-amber-50'
-                    );
-                    e.target.parentElement.innerHTML = `<span class="text-stone-500 text-sm text-center px-4">Adicione a imagem em<br/>public/media/quadros/</span>`;
-                  }}
+                  className="w-full h-full object-contain group-hover:scale-[1.02] transition-transform duration-300"
                 />
               </div>
               <div className="p-5">
@@ -46,7 +34,7 @@ const Paintings = memo(() => {
                   {item.title}
                 </h3>
                 <p className="text-sm text-stone-500">
-                  {item.technique} · {item.dimensions} · {item.year}
+                  {item.technique} · {item.year}
                 </p>
               </div>
             </article>

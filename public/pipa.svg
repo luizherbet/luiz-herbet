@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Pipa">
+  <rect width="64" height="64" rx="12" fill="#faf7f2"/>
+  <path d="M32 10 L54 32 L32 54 L10 32 Z" fill="#e8c547"/>
+  <path d="M32 10 L54 32 L32 32 Z" fill="#c94c4c"/>
+  <path d="M10 32 L32 32 L32 54 Z" fill="#4a7cb5"/>
+  <path d="M32 10 L32 32 L10 32 Z" fill="#5a9e6f"/>
+  <line x1="32" y1="10" x2="32" y2="4" stroke="#292524" stroke-width="2" stroke-linecap="round"/>
+  <path d="M28 4 Q32 0 36 4" fill="none" stroke="#292524" stroke-width="1.5"/>
+</svg>

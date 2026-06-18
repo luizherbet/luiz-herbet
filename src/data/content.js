@@ -1,13 +1,30 @@
 import entrelinhas from '../assets/Nas entrelinhas - disco/Entrelinhas.wav';
 import navegante from '../assets/Nas entrelinhas - disco/Navegante.wav';
-import capa from '../assets/Nas entrelinhas - disco/cover.jpeg';
+import capaDisco from '../assets/Nas entrelinhas - disco/cover.jpeg';
+import foto from '../assets/img/Foto.jpeg';
+
+import quadro01 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11.jpeg';
+import quadro02 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.10.jpeg';
+import quadro03 from '../assets/Quadros/WhatsApp Image 2026-02-16 at 16.26.30.jpeg';
+import quadro04 from '../assets/Quadros/WhatsApp Image 2026-04-30 at 21.19.23 (1).jpeg';
+import quadro05 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 12.30.53.jpeg';
+import quadro06 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.10 (1).jpeg';
+import quadro07 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (1).jpeg';
+import quadro08 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (2).jpeg';
+
+export const profile = {
+  name: 'Luiz Pipa',
+  photo: foto,
+  tagline: 'Música · Literatura · Artes visuais',
+  bio: 'Artista entre sons, palavras e cores. Neste espaço você encontra o disco Nas entrelinhas, o livro e a coleção de pinturas.',
+};
 
 export const album = {
   title: 'Nas entrelinhas',
   year: 2026,
   description:
     'Canções que habitam o espaço entre o dito e o sentido — memória, mar e imaginação.',
-  cover: capa,
+  cover: capaDisco,
   tracks: [
     {
       id: 1,
@@ -24,41 +41,63 @@ export const album = {
   ],
 };
 
-export const book = {
-  title: 'Título do Livro',
-  subtitle: 'Subtítulo ou gênero',
-  year: 2026,
-  cover: '/media/livro/capa.jpg',
-  synopsis:
-    'Um livro que nasce do encontro entre palavra, imagem e experiência vivida. Aqui você pode contar a história da obra, o que a motivou e o que o leitor vai encontrar nas páginas.',
-  excerpt:
-    'Trecho de abertura ou citação representativa do livro. Substitua este texto pelo trecho que melhor apresenta sua escrita ao visitante do site.',
-  purchaseLink: '',
-};
+export { book } from './book';
 
 export const paintings = [
   {
     id: 1,
-    title: 'Quadro 01',
-    year: 2025,
+    title: 'O flautista e a pipa',
+    year: 2026,
     technique: 'Óleo sobre tela',
-    dimensions: '60 × 80 cm',
-    image: '/media/quadros/quadro-01.jpg',
+    image: quadro01,
   },
   {
     id: 2,
-    title: 'Quadro 02',
-    year: 2025,
-    technique: 'Acrílica sobre tela',
-    dimensions: '50 × 70 cm',
-    image: '/media/quadros/quadro-02.jpg',
+    title: 'Rosto sob a lua',
+    year: 2026,
+    technique: 'Óleo sobre tela',
+    image: quadro02,
   },
   {
     id: 3,
-    title: 'Quadro 03',
+    title: 'Casa e pipa',
     year: 2026,
-    technique: 'Mista sobre papel',
-    dimensions: '40 × 60 cm',
-    image: '/media/quadros/quadro-03.jpg',
+    technique: 'Óleo sobre tela',
+    image: quadro03,
+  },
+  {
+    id: 4,
+    title: 'A janela e a multidão',
+    year: 2026,
+    technique: 'Óleo sobre tela',
+    image: quadro04,
+  },
+  {
+    id: 5,
+    title: 'Composição abstrata',
+    year: 2026,
+    technique: 'Mista sobre tela',
+    image: quadro05,
+  },
+  {
+    id: 6,
+    title: 'Barco e sol',
+    year: 2026,
+    technique: 'Óleo sobre tela',
+    image: quadro06,
+  },
+  {
+    id: 7,
+    title: 'Quadrados e linha',
+    year: 2026,
+    technique: 'Desenho a lápis e cor',
+    image: quadro07,
+  },
+  {
+    id: 8,
+    title: 'Pipas e janelas',
+    year: 2026,
+    technique: 'Óleo sobre tela',
+    image: quadro08,
   },
 ];

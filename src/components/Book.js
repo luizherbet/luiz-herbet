@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
+import { Link } from 'react-router-dom';
 import Fading from './Fading';
-import { book } from '../data/content';
+import { book } from '../data/book';
 
 const Book = memo(() => {
   return (
@@ -21,44 +22,52 @@ const Book = memo(() => {
                 src={book.cover}
                 alt={`Capa de ${book.title}`}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.target.style.display = 'none';
-                  e.target.parentElement.classList.add(
-                    'flex',
-                    'items-center',
-                    'justify-center',
-                    'bg-gradient-to-br',
-                    'from-stone-200',
-                    'to-amber-100'
-                  );
-                  e.target.parentElement.innerHTML =
-                    '<span class="text-stone-500 text-sm text-center px-4">Adicione a capa em<br/>public/media/livro/capa.jpg</span>';
-                }}
               />
             </div>
           </div>
 
           <div className="flex-1 text-center md:text-left">
             <p className="text-sm uppercase tracking-wider text-amber-800/80 mb-2">
-              {book.subtitle} · {book.year}
+              {book.subtitle} · {book.year} · {book.pages} páginas
             </p>
-            <h3 className="text-3xl md:text-4xl font-light text-stone-900 mb-6">
+            <h3 className="text-3xl md:text-4xl font-light text-stone-900 mb-2">
               {book.title}
             </h3>
-            <p className="text-stone-700 leading-relaxed mb-6">{book.synopsis}</p>
+            <p className="text-stone-500 mb-6">por {book.author}</p>
+
+            <p className="text-stone-700 leading-relaxed mb-4">{book.synopsis}</p>
+
+            <p className="text-sm text-stone-500 mb-6">
+              {book.sections.join(' · ')}
+            </p>
+
             <blockquote className="border-l-4 border-amber-700/40 pl-5 italic text-stone-600 mb-8 text-left">
               {book.excerpt}
             </blockquote>
-            {book.purchaseLink && (
+
+            <div className="flex flex-wrap justify-center md:justify-start gap-3">
+              <Link
+                to="/livro"
+                className="bg-stone-900 text-amber-50 px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-800 transition-colors"
+              >
+                Ler online
+              </Link>
+              <a
+                href={book.pdf}
+                download={book.pdfFileName}
+                className="border border-stone-400 text-stone-800 px-6 py-3 rounded-full text-sm font-medium hover:border-stone-600 transition-colors"
+              >
+                Baixar PDF
+              </a>
               <a
                 href={book.purchaseLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-block bg-stone-900 text-amber-50 px-6 py-3 rounded-full text-sm font-medium hover:bg-stone-800 transition-colors"
+                className="border border-amber-700 text-amber-900 px-6 py-3 rounded-full text-sm font-medium hover:bg-amber-100 transition-colors"
               >
-                Adquirir o livro
+                Comprar na Amazon
               </a>
-            )}
+            </div>
           </div>
         </div>
       </section>
