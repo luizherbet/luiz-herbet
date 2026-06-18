@@ -15,8 +15,14 @@ const Header = memo(() => {
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <Link
             to="/"
-            className="text-2xl md:text-3xl font-light tracking-tight hover:opacity-80 transition-opacity"
+            className="flex items-center gap-2 text-2xl md:text-3xl font-light tracking-tight hover:opacity-80 transition-opacity"
           >
+            <img
+              src="/pipa.svg"
+              alt=""
+              className="h-8 w-8 md:h-9 md:w-9 shrink-0"
+              aria-hidden="true"
+            />
             Luiz Pipa
           </Link>
 
