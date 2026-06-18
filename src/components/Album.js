@@ -9,6 +9,17 @@ const formatTime = (seconds) => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
+const isTrackAvailable = (item) => item.available !== false && Boolean(item.src);
+
+const findAdjacentTrack = (fromIndex, direction) => {
+  let index = fromIndex + direction;
+  while (index >= 0 && index < album.tracks.length) {
+    if (isTrackAvailable(album.tracks[index])) return index;
+    index += direction;
+  }
+  return fromIndex;
+};
+
 const Album = memo(() => {
   const audioRef = useRef(null);
   const [currentTrack, setCurrentTrack] = useState(0);
@@ -18,10 +29,11 @@ const Album = memo(() => {
   const [duration, setDuration] = useState(0);
 
   const track = album.tracks[currentTrack];
+  const canPlay = isTrackAvailable(track);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !canPlay) return;
 
     const onTimeUpdate = () => {
       setCurrentTime(audio.currentTime);
@@ -29,8 +41,9 @@ const Album = memo(() => {
     };
     const onLoadedMetadata = () => setDuration(audio.duration);
     const onEnded = () => {
-      if (currentTrack < album.tracks.length - 1) {
-        setCurrentTrack((prev) => prev + 1);
+      const nextIndex = findAdjacentTrack(currentTrack, 1);
+      if (nextIndex !== currentTrack) {
+        setCurrentTrack(nextIndex);
       } else {
         setIsPlaying(false);
       }
@@ -45,32 +58,48 @@ const Album = memo(() => {
       audio.removeEventListener('loadedmetadata', onLoadedMetadata);
       audio.removeEventListener('ended', onEnded);
     };
-  }, [currentTrack]);
+  }, [currentTrack, canPlay]);
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio) return;
+    if (!audio || !canPlay) {
+      setIsPlaying(false);
+      setProgress(0);
+      setCurrentTime(0);
+      setDuration(0);
+      return;
+    }
 
     audio.load();
     if (isPlaying) {
       audio.play().catch(() => setIsPlaying(false));
     }
-  }, [currentTrack, isPlaying]);
+  }, [currentTrack, isPlaying, canPlay]);
 
-  const togglePlay = () => setIsPlaying((prev) => !prev);
+  const togglePlay = () => {
+    if (!canPlay) return;
+    setIsPlaying((prev) => !prev);
+  };
 
   const selectTrack = (index) => {
     setCurrentTrack(index);
-    setIsPlaying(true);
+    if (isTrackAvailable(album.tracks[index])) {
+      setIsPlaying(true);
+    } else {
+      setIsPlaying(false);
+    }
   };
 
   const handleProgressClick = (e) => {
     const audio = audioRef.current;
-    if (!audio || !audio.duration) return;
+    if (!audio || !audio.duration || !canPlay) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const ratio = (e.clientX - rect.left) / rect.width;
     audio.currentTime = ratio * audio.duration;
   };
+
+  const previousIndex = findAdjacentTrack(currentTrack, -1);
+  const nextIndex = findAdjacentTrack(currentTrack, 1);
 
   return (
     <Fading time={800}>
@@ -112,92 +141,116 @@ const Album = memo(() => {
           </div>
 
           <div className="flex-1 w-full">
-            <audio ref={audioRef} src={track.src} preload="metadata" />
+            {canPlay && (
+              <audio ref={audioRef} src={track.src} preload="metadata" />
+            )}
 
             <div className="bg-stone-50 rounded-xl p-6 mb-6">
               <p className="text-xs uppercase tracking-wider text-stone-500 mb-1">
-                Tocando agora
+                {canPlay ? 'Tocando agora' : 'Faixa selecionada'}
               </p>
               <p className="text-lg font-medium text-stone-900 mb-4">
                 {track.title}
               </p>
 
-              <div
-                className="h-1.5 bg-stone-200 rounded-full cursor-pointer mb-2"
-                onClick={handleProgressClick}
-                role="progressbar"
-                aria-valuenow={Math.round(progress)}
-                aria-valuemin={0}
-                aria-valuemax={100}
-                aria-label="Progresso da faixa"
-              >
-                <div
-                  className="h-full bg-stone-800 rounded-full transition-all"
-                  style={{ width: `${progress}%` }}
-                />
-              </div>
+              {canPlay ? (
+                <>
+                  <div
+                    className="h-1.5 bg-stone-200 rounded-full cursor-pointer mb-2"
+                    onClick={handleProgressClick}
+                    role="progressbar"
+                    aria-valuenow={Math.round(progress)}
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-label="Progresso da faixa"
+                  >
+                    <div
+                      className="h-full bg-stone-800 rounded-full transition-all"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
 
-              <div className="flex justify-between text-xs text-stone-500 mb-4">
-                <span>{formatTime(currentTime)}</span>
-                <span>{formatTime(duration) || track.duration}</span>
-              </div>
+                  <div className="flex justify-between text-xs text-stone-500 mb-4">
+                    <span>{formatTime(currentTime)}</span>
+                    <span>{formatTime(duration) || track.duration}</span>
+                  </div>
 
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentTrack((prev) => Math.max(0, prev - 1))
-                  }
-                  disabled={currentTrack === 0}
-                  className="text-stone-600 hover:text-stone-900 disabled:opacity-30"
-                  aria-label="Faixa anterior"
-                >
-                  ⏮
-                </button>
-                <button
-                  type="button"
-                  onClick={togglePlay}
-                  className="w-12 h-12 rounded-full bg-stone-900 text-amber-50 flex items-center justify-center hover:bg-stone-800 transition-colors text-lg"
-                  aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}
-                >
-                  {isPlaying ? '⏸' : '▶'}
-                </button>
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentTrack((prev) =>
-                      Math.min(album.tracks.length - 1, prev + 1)
-                    )
-                  }
-                  disabled={currentTrack === album.tracks.length - 1}
-                  className="text-stone-600 hover:text-stone-900 disabled:opacity-30"
-                  aria-label="Próxima faixa"
-                >
-                  ⏭
-                </button>
-              </div>
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTrack(previousIndex)}
+                      disabled={previousIndex === currentTrack}
+                      className="text-stone-600 hover:text-stone-900 disabled:opacity-30"
+                      aria-label="Faixa anterior"
+                    >
+                      ⏮
+                    </button>
+                    <button
+                      type="button"
+                      onClick={togglePlay}
+                      className="w-12 h-12 rounded-full bg-stone-900 text-amber-50 flex items-center justify-center hover:bg-stone-800 transition-colors text-lg"
+                      aria-label={isPlaying ? 'Pausar' : 'Reproduzir'}
+                    >
+                      {isPlaying ? '⏸' : '▶'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentTrack(nextIndex)}
+                      disabled={nextIndex === currentTrack}
+                      className="text-stone-600 hover:text-stone-900 disabled:opacity-30"
+                      aria-label="Próxima faixa"
+                    >
+                      ⏭
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <p className="text-sm text-stone-500">
+                  <span className="inline-block uppercase tracking-wider text-[10px] px-2 py-0.5 rounded-full bg-stone-300/60 text-stone-600 font-medium mr-2">
+                    em breve
+                  </span>
+                  Gravação em andamento.
+                </p>
+              )}
             </div>
 
             <ol className="space-y-1">
-              {album.tracks.map((item, index) => (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => selectTrack(index)}
-                    className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-colors ${
-                      index === currentTrack
-                        ? 'bg-stone-900 text-amber-50'
-                        : 'hover:bg-stone-100 text-stone-800'
-                    }`}
-                  >
-                    <span className="text-sm w-6 opacity-70">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-                    <span className="flex-1 font-medium">{item.title}</span>
-                    <span className="text-sm opacity-70">{item.duration}</span>
-                  </button>
-                </li>
-              ))}
+              {album.tracks.map((item, index) => {
+                const available = isTrackAvailable(item);
+
+                return (
+                  <li key={item.id}>
+                    <button
+                      type="button"
+                      onClick={() => selectTrack(index)}
+                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-lg text-left transition-colors ${
+                        index === currentTrack
+                          ? available
+                            ? 'bg-stone-900 text-amber-50'
+                            : 'bg-stone-200 text-stone-700'
+                          : available
+                            ? 'hover:bg-stone-100 text-stone-800'
+                            : 'text-stone-500 hover:bg-stone-50'
+                      }`}
+                    >
+                      <span className="text-sm w-6 opacity-70">
+                        {String(index + 1).padStart(2, '0')}
+                      </span>
+                      <span className="flex-1 font-medium flex items-center gap-2 flex-wrap">
+                        {item.title}
+                        {!available && (
+                          <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full bg-stone-300/60 text-stone-600 font-medium">
+                            em breve
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-sm opacity-70 shrink-0">
+                        {available ? item.duration : ''}
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
             </ol>
           </div>
         </div>
