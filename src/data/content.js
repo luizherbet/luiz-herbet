@@ -1,30 +1,26 @@
-// Coloque seus arquivos em public/media/ — veja as pastas album, livro e quadros.
+import entrelinhas from '../assets/Nas entrelinhas - disco/Entrelinhas.wav';
+import navegante from '../assets/Nas entrelinhas - disco/Navegante.wav';
+import capa from '../assets/Nas entrelinhas - disco/cover.jpeg';
 
 export const album = {
-  title: 'Nome do Disco',
+  title: 'Nas entrelinhas',
   year: 2026,
   description:
-    'Uma coletânea de canções que atravessam territórios sonoros, memória e imaginação.',
-  cover: '/media/album/capa.jpg',
+    'Canções que habitam o espaço entre o dito e o sentido — memória, mar e imaginação.',
+  cover: capa,
   tracks: [
-  {
-    id: 1,
-    title: 'Faixa 01',
-    duration: '3:42',
-    src: '/media/album/faixa-01.mp3',
-  },
-  {
-    id: 2,
-    title: 'Faixa 02',
-    duration: '4:15',
-    src: '/media/album/faixa-02.mp3',
-  },
-  {
-    id: 3,
-    title: 'Faixa 03',
-    duration: '3:58',
-    src: '/media/album/faixa-03.mp3',
-  },
+    {
+      id: 1,
+      title: 'Entrelinhas',
+      duration: '1:47',
+      src: entrelinhas,
+    },
+    {
+      id: 2,
+      title: 'Navegante',
+      duration: '1:22',
+      src: navegante,
+    },
   ],
 };
 
