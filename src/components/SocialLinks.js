@@ -1,25 +1,35 @@
-import { FaInstagram, FaSpotify } from 'react-icons/fa';
+import { FaAmazon, FaInstagram, FaYoutube } from 'react-icons/fa';
+import { book } from '../data/book';
 
 const SocialLinks = () => {
   return (
     <div className="flex space-x-4">
       <a
-        href="https://instagram.com"
+        href="https://www.instagram.com/pipaluiz/"
         target="_blank"
         rel="noopener noreferrer"
         className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
-        aria-label="Instagram"
+        aria-label="Instagram @pipaluiz"
       >
         <FaInstagram className="h-5 w-5" />
       </a>
       <a
-        href="https://open.spotify.com"
+        href="https://www.youtube.com/@LuizPipa"
         target="_blank"
         rel="noopener noreferrer"
         className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
-        aria-label="Spotify"
+        aria-label="YouTube"
       >
-        <FaSpotify className="h-5 w-5" />
+        <FaYoutube className="h-5 w-5" />
+      </a>
+      <a
+        href={book.purchaseLink}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
+        aria-label="Livro na Amazon"
+      >
+        <FaAmazon className="h-5 w-5" />
       </a>
     </div>
   );
