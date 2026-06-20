@@ -1,5 +1,6 @@
 import entrelinhas from '../assets/Nas entrelinhas - disco/Entrelinhas.wav';
 import navegante from '../assets/Nas entrelinhas - disco/Navegante.wav';
+import eco from '../assets/Nas entrelinhas - disco/Eco.wav';
 import capaDisco from '../assets/Nas entrelinhas - disco/cover.jpeg';
 import foto from '../assets/img/Foto.jpeg';
 
@@ -43,8 +44,9 @@ export const album = {
     {
       id: 3,
       title: 'Eco',
-      duration: 'em breve',
-      available: false,
+      duration: '2:18',
+      src: eco,
+      available: true,
     },
     {
       id: 4,
