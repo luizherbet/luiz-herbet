@@ -7,7 +7,7 @@ export const book = {
   pdf: '/media/livro/nas-entrelinhas.pdf',
   pdfFileName: 'Nas-Entrelinhas-Luiz-Pipa.pdf',
   purchaseLink: 'https://www.amazon.com.br/dp/B0H47YWF2T',
-  pages: 74,
+  pages: 68,
   sections: [
     'Palavrear',
     'Janelas',

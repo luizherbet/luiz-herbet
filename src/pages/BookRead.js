@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Fading from '../components/Fading';
+import BookReader from '../components/BookReader';
 import { book } from '../data/book';
 import { usePageMeta } from '../hooks/usePageMeta';
 
@@ -19,8 +20,8 @@ const BookRead = memo(() => {
       <Header />
       <Fading time={400}>
         <main className="flex-grow px-4 md:px-6 py-8">
-          <div className="bg-white rounded-xl p-5 md:p-8">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div className="bg-white rounded-xl p-5 md:p-8 md:px-12">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-6 border-b border-stone-100">
               <div>
                 <Link
                   to="/#livro"
@@ -53,21 +54,7 @@ const BookRead = memo(() => {
               </div>
             </div>
 
-            <div className="rounded-lg overflow-hidden border border-stone-200 bg-stone-100">
-              <iframe
-                title={`Leitura de ${book.title}`}
-                src={`${book.pdf}#view=FitH`}
-                className="w-full h-[75vh] min-h-[500px]"
-              />
-            </div>
-
-            <p className="text-center text-stone-400 text-xs mt-4">
-              Se o leitor não carregar,{' '}
-              <a href={book.pdf} target="_blank" rel="noopener noreferrer" className="underline hover:text-stone-600">
-                abra o PDF em nova aba
-              </a>
-              .
-            </p>
+            <BookReader />
           </div>
         </main>
       </Fading>
