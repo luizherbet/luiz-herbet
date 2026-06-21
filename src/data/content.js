@@ -153,7 +153,7 @@ export const paintings = [
   },
   {
     id: 9,
-    title: 'Espantalho',
+    title: 'Luiz Pipa',
     technique: 'Mista sobre tela',
     image: quadro09,
   },
