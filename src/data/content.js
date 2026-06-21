@@ -13,6 +13,7 @@ import quadro06 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.10 (1
 import quadro07 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (1).jpeg';
 import quadro08 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (2).jpeg';
 import quadro09 from '../assets/Quadros/WhatsApp Image 2026-06-21 at 13.29.37.jpeg';
+import quadro10 from '../assets/Quadros/WhatsApp Image 2026-06-21 at 17.05.55.jpeg';
 
 export const profile = {
   name: 'Luiz Pipa',
@@ -156,5 +157,11 @@ export const paintings = [
     title: 'Luiz Pipa',
     technique: 'Mista sobre tela',
     image: quadro09,
+  },
+  {
+    id: 10,
+    title: 'Olhos de pipa',
+    technique: 'Desenho e cor sobre papel',
+    image: quadro10,
   },
 ];
