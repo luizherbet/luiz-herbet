@@ -12,6 +12,7 @@ import quadro05 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 12.30.53.jp
 import quadro06 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.10 (1).jpeg';
 import quadro07 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (1).jpeg';
 import quadro08 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (2).jpeg';
+import quadro09 from '../assets/Quadros/WhatsApp Image 2026-06-21 at 13.29.37.jpeg';
 
 export const profile = {
   name: 'Luiz Pipa',
@@ -149,5 +150,11 @@ export const paintings = [
     title: 'Pipas e janelas',
     technique: 'Óleo sobre tela',
     image: quadro08,
+  },
+  {
+    id: 9,
+    title: 'Espantalho',
+    technique: 'Mista sobre tela',
+    image: quadro09,
   },
 ];
