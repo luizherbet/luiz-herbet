@@ -55,7 +55,7 @@ export const album = {
     {
       id: 4,
       title: 'Novela',
-      duration: '3:08',
+      duration: '3:07',
       src: novela,
       available: true,
     },
