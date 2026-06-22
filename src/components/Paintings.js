@@ -12,7 +12,7 @@ const Paintings = memo(() => {
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl text-stone-900 mb-3">Quadros</h2>
           <p className="text-stone-600 max-w-xl mx-auto">
-            Pinturas e obras visuais — cada quadro com sua história e técnica.
+            Safra de pinturas
           </p>
         </div>
 

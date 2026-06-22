@@ -109,7 +109,7 @@ const Album = memo(() => {
       >
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl text-stone-900 mb-3">Disco</h2>
-          <p className="text-stone-600 max-w-xl mx-auto">{album.description}</p>
+          <p className="text-stone-600 max-w-xl mx-auto">Safra de canções</p>
         </div>
 
         <div className="flex flex-col lg:flex-row gap-10 items-center lg:items-start max-w-4xl mx-auto">
@@ -137,7 +137,10 @@ const Album = memo(() => {
             <h3 className="text-xl font-medium text-stone-900 mt-4 text-center">
               {album.title}
             </h3>
-            <p className="text-stone-500 text-sm text-center">{album.year}</p>
+            <p className="text-stone-500 text-sm text-center mt-2 px-2">
+              {album.description}
+            </p>
+            <p className="text-stone-500 text-sm text-center mt-1">{album.year}</p>
           </div>
 
           <div className="flex-1 w-full">

@@ -12,7 +12,7 @@ const Book = memo(() => {
       >
         <div className="text-center mb-10">
           <h2 className="text-4xl md:text-5xl text-stone-900 mb-3">Livro</h2>
-          <p className="text-stone-600">A obra escrita de Luiz Pipa</p>
+          <p className="text-stone-600">Safra de poesia</p>
         </div>
 
         <div className="flex flex-col md:flex-row gap-10 max-w-4xl mx-auto items-center md:items-start">
