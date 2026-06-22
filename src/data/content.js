@@ -1,5 +1,5 @@
 import entrelinhas from '../assets/Nas entrelinhas - disco/Entrelinhas.wav';
-import navegante from '../assets/Nas entrelinhas - disco/Navegante.wav';
+import navegante from '../assets/Nas entrelinhas - disco/Navegante.mp3';
 import eco from '../assets/Nas entrelinhas - disco/Eco.wav';
 import capaDisco from '../assets/Nas entrelinhas - disco/cover.jpeg';
 import foto from '../assets/img/Foto.jpeg';
