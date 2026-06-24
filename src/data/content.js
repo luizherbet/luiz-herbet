@@ -15,7 +15,6 @@ import quadro07 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (1
 import quadro08 from '../assets/Quadros/WhatsApp Image 2026-06-18 at 16.22.11 (2).jpeg';
 import quadro09 from '../assets/Quadros/WhatsApp Image 2026-06-21 at 13.29.37.jpeg';
 import quadro10 from '../assets/Quadros/WhatsApp Image 2026-06-21 at 17.05.55.jpeg';
-import quadro11 from '../assets/Quadros/WhatsApp Image 2026-06-22 at 11.44.17.jpeg';
 import quadro12 from '../assets/Quadros/WhatsApp Image 2026-06-24 at 18.32.40.jpeg';
 
 export const profile = {
@@ -167,12 +166,6 @@ export const paintings = [
     title: 'Olhos de pipa',
     technique: 'Desenho e cor sobre papel',
     image: quadro10,
-  },
-  {
-    id: 11,
-    title: 'Pipas e fios',
-    technique: 'Mista sobre papel',
-    image: quadro11,
   },
   {
     id: 12,
