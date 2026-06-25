@@ -69,7 +69,7 @@ export const album = {
     {
       id: 6,
       title: 'Canção do Peregrino',
-      duration: '2:40',
+      duration: '2:41',
       src: cancaoDoPeregrino,
       available: true,
     },
