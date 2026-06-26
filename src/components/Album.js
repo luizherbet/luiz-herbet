@@ -4,8 +4,12 @@ import { album } from '../data/content';
 
 const isTrackOnSpotify = (item) => Boolean(item.onSpotify);
 
+const getSpotifyEmbedHeight = (trackCount) => 160 + trackCount * 80;
+
 const Album = memo(() => {
+  const spotifyTrackCount = album.tracks.filter(isTrackOnSpotify).length;
   const spotifyEmbedUrl = `https://open.spotify.com/embed/album/${album.spotifyEmbedId}?utm_source=generator`;
+  const embedHeight = getSpotifyEmbedHeight(spotifyTrackCount);
 
   return (
     <Fading time={800}>
@@ -50,7 +54,7 @@ const Album = memo(() => {
                 src={spotifyEmbedUrl}
                 title={`${album.title} no Spotify`}
                 className="w-full border-0"
-                height="380"
+                height={embedHeight}
                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
                 loading="lazy"
               />
