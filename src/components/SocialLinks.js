@@ -1,4 +1,5 @@
-import { FaAmazon, FaInstagram, FaYoutube } from 'react-icons/fa';
+import { FaAmazon, FaInstagram, FaSpotify, FaYoutube } from 'react-icons/fa';
+import { album } from '../data/content';
 import { book } from '../data/book';
 
 const SocialLinks = () => {
@@ -12,6 +13,15 @@ const SocialLinks = () => {
         aria-label="Instagram @pipaluiz"
       >
         <FaInstagram className="h-5 w-5" />
+      </a>
+      <a
+        href={album.spotifyUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
+        aria-label="Spotify — Nas Entrelinhas"
+      >
+        <FaSpotify className="h-5 w-5" />
       </a>
       <a
         href="https://www.youtube.com/@LuizHPipa"

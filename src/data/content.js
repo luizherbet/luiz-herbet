@@ -1,8 +1,3 @@
-import entrelinhas from '../assets/Nas entrelinhas - disco/Entrelinhas.wav';
-import navegante from '../assets/Nas entrelinhas - disco/Navegante.wav';
-import eco from '../assets/Nas entrelinhas - disco/Eco.wav';
-import novela from '../assets/Nas entrelinhas - disco/Novela.wav';
-import cancaoDoPeregrino from '../assets/Nas entrelinhas - disco/Cancao do Peregrino.wav';
 import capaDisco from '../assets/Nas entrelinhas - disco/cover.jpeg';
 import foto from '../assets/img/Foto.jpeg';
 
@@ -31,77 +26,68 @@ export const album = {
   description:
     'Canções que habitam o espaço entre o dito, o não dito e o sentido.',
   cover: capaDisco,
+  spotifyUrl: 'https://open.spotify.com/album/5sdzn6dfbb1Js1JwjwWGwu',
+  spotifyEmbedId: '5sdzn6dfbb1Js1JwjwWGwu',
   tracks: [
     {
       id: 1,
       title: 'Entrelinhas',
       duration: '1:47',
-      src: entrelinhas,
-      available: true,
+      onSpotify: true,
     },
     {
       id: 2,
       title: 'Navegante',
       duration: '1:22',
-      src: navegante,
-      available: true,
+      onSpotify: true,
     },
     {
       id: 3,
       title: 'Eco',
       duration: '2:18',
-      src: eco,
-      available: true,
+      onSpotify: true,
     },
     {
       id: 4,
       title: 'Novela',
       duration: '3:14',
-      src: novela,
-      available: true,
+      onSpotify: true,
     },
     {
       id: 5,
       title: 'Paisagem',
       duration: 'em breve',
-      available: false,
     },
     {
       id: 6,
       title: 'Canção do Peregrino',
       duration: '2:41',
-      src: cancaoDoPeregrino,
-      available: true,
+      onSpotify: true,
     },
     {
       id: 7,
       title: 'Solidão',
       duration: 'em breve',
-      available: false,
     },
     {
       id: 8,
       title: 'Repaginada',
       duration: 'em breve',
-      available: false,
     },
     {
       id: 9,
       title: 'Sem saber',
       duration: 'em breve',
-      available: false,
     },
     {
       id: 10,
       title: 'Tus ojos',
       duration: 'em breve',
-      available: false,
     },
     {
       id: 11,
       title: 'Poetas',
       duration: 'em breve',
-      available: false,
     },
   ],
 };
