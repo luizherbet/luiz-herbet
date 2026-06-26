@@ -67,7 +67,8 @@ export const album = {
     {
       id: 7,
       title: 'Solidão',
-      duration: 'em breve',
+      duration: '1:36',
+      onSpotify: true,
     },
     {
       id: 8,
