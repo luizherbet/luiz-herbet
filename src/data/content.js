@@ -38,8 +38,8 @@ export const album = {
     },
     {
       type: 'track',
-      embedId: '0cYP2pPe7cITKsmmBvV7le',
-      url: 'https://open.spotify.com/track/0cYP2pPe7cITKsmmBvV7le',
+      embedId: '3FlWiAgXXePPa1Y6rKh3sZ',
+      url: 'https://open.spotify.com/intl-pt/track/3FlWiAgXXePPa1Y6rKh3sZ',
       title: 'Solidão',
       subtitle: 'Single · 2026',
       trackCount: 1,
