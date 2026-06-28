@@ -109,7 +109,7 @@ const PatternSlot = memo(
 const MusicPatterns = memo(() => {
   const isTouch = useTouchDevice();
   const [patternSize, setPatternSize] = useState(3);
-  const [slots, setSlots] = useState([null, null, null]);
+  const [slots, setSlots] = useState([null, null, null, null]);
   const [targetSlotIndex, setTargetSlotIndex] = useState(null);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -182,7 +182,7 @@ const MusicPatterns = memo(() => {
   const handleClearAll = useCallback(() => {
     stopLoop();
     setIsPlaying(false);
-    setSlots([null, null, null]);
+    setSlots([null, null, null, null]);
     setTargetSlotIndex(null);
     setSelectedNoteId(null);
   }, [stopLoop]);
@@ -218,7 +218,7 @@ const MusicPatterns = memo(() => {
           </p>
           <h2 className="text-4xl md:text-5xl text-stone-900 mb-3">Padrões musicais</h2>
           <p className="text-stone-600 leading-relaxed">
-            Monte um padrão de 2 ou 3 notas e ouça a repetição em loop. Ideal para
+            Monte um padrão de 2, 3 ou 4 notas e ouça a repetição em loop. Ideal para
             treinar sequências, cores e o pensamento computacional com música.
           </p>
         </div>
@@ -227,7 +227,7 @@ const MusicPatterns = memo(() => {
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-violet-100">
             <h3 className="text-lg font-medium text-stone-900 mb-2">1. Escolha o tamanho do padrão</h3>
             <div className="flex flex-wrap gap-3">
-              {[2, 3].map((size) => (
+              {[2, 3, 4].map((size) => (
                 <button
                   key={size}
                   type="button"
