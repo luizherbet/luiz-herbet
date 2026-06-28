@@ -1,9 +1,23 @@
-import React, { memo, useCallback, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 import Fading from './Fading';
 import { MUSIC_NOTES, getNoteById } from '../data/musicNotes';
 import { useNotePlayer } from '../hooks/useNotePlayer';
 
-const NoteSquare = memo(({ note, onPlay, onSelect, selected, draggable = true }) => (
+const useTouchDevice = () => {
+  const [isTouch, setIsTouch] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(pointer: coarse)');
+    const update = () => setIsTouch(mediaQuery.matches);
+    update();
+    mediaQuery.addEventListener('change', update);
+    return () => mediaQuery.removeEventListener('change', update);
+  }, []);
+
+  return isTouch;
+};
+
+const NoteSquare = memo(({ note, onTap, selected, draggable }) => (
   <button
     type="button"
     draggable={draggable}
@@ -11,90 +25,92 @@ const NoteSquare = memo(({ note, onPlay, onSelect, selected, draggable = true })
       event.dataTransfer.setData('text/note-id', note.id);
       event.dataTransfer.effectAllowed = 'copy';
     }}
-    onClick={() => {
-      onPlay(note.frequency);
-      onSelect?.(note.id);
-    }}
-    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shadow-md flex items-center justify-center text-lg sm:text-xl font-semibold transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-stone-400 ${
+    onClick={() => onTap(note)}
+    className={`w-16 h-16 sm:w-20 sm:h-20 rounded-2xl shadow-md flex items-center justify-center text-lg sm:text-xl font-semibold transition-transform hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-4 focus-visible:ring-stone-400 touch-manipulation ${
       selected ? 'ring-4 ring-stone-900 scale-105' : ''
     }`}
     style={{ backgroundColor: note.color, color: note.textColor }}
     aria-label={`Nota ${note.label}`}
+    aria-pressed={selected}
   >
     {note.label}
   </button>
 ));
 
 const PatternSlot = memo(
-  ({ index, noteId, active, onDropNote, onClear, onPlaceSelected, selectedNoteId }) => {
+  ({
+    index,
+    noteId,
+    active,
+    targeted,
+    isTouch,
+    onSlotTap,
+    onDropNote,
+    onClear,
+  }) => {
     const note = noteId ? getNoteById(noteId) : null;
 
     return (
-      <div
-        className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-dashed flex items-center justify-center transition-colors ${
+      <button
+        type="button"
+        disabled={!active}
+        className={`relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl border-2 border-dashed flex items-center justify-center transition-all touch-manipulation disabled:cursor-default ${
           active
-            ? 'border-amber-500 bg-amber-50/80'
+            ? targeted
+              ? 'border-violet-600 bg-violet-50 ring-4 ring-violet-300 scale-105'
+              : note
+                ? 'border-amber-400 bg-amber-50/80'
+                : 'border-amber-500 bg-amber-50/80'
             : 'border-stone-300 bg-stone-100/60 opacity-60'
         }`}
         onDragOver={(event) => {
-          if (!active) return;
+          if (!active || isTouch) return;
           event.preventDefault();
           event.dataTransfer.dropEffect = 'copy';
         }}
         onDrop={(event) => {
-          if (!active) return;
+          if (!active || isTouch) return;
           event.preventDefault();
           const droppedId = event.dataTransfer.getData('text/note-id');
           if (droppedId) onDropNote(index, droppedId);
         }}
-        onClick={() => {
-          if (!active) return;
-          if (selectedNoteId) onPlaceSelected(index, selectedNoteId);
-        }}
-        role="button"
-        tabIndex={active ? 0 : -1}
-        aria-label={note ? `Posição ${index + 1}: ${note.label}` : `Posição ${index + 1} vazia`}
-        onKeyDown={(event) => {
-          if (!active) return;
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            if (selectedNoteId) onPlaceSelected(index, selectedNoteId);
-          }
-        }}
+        onClick={() => active && onSlotTap(index)}
+        aria-label={
+          note
+            ? `Posição ${index + 1}: ${note.label}. Toque para remover.`
+            : `Posição ${index + 1} vazia. Toque para escolher esta caixa.`
+        }
       >
         {note ? (
           <>
             <div
-              className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl shadow flex items-center justify-center text-lg font-semibold"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl shadow flex items-center justify-center text-lg font-semibold pointer-events-none"
               style={{ backgroundColor: note.color, color: note.textColor }}
             >
               {note.label}
             </div>
-            <button
-              type="button"
-              onClick={(event) => {
-                event.stopPropagation();
-                onClear(index);
-              }}
-              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-stone-800 text-white text-xs leading-none hover:bg-stone-700"
-              aria-label={`Remover nota da posição ${index + 1}`}
+            <span
+              className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-stone-800 text-white text-xs leading-6 text-center pointer-events-none"
+              aria-hidden="true"
             >
               ×
-            </button>
+            </span>
           </>
         ) : (
-          <span className="text-xs text-stone-500 text-center px-2">
-            {active ? 'Solte aqui' : ''}
+          <span className="text-xs text-stone-500 text-center px-2 pointer-events-none">
+            {active ? (targeted ? 'Agora toque uma nota' : 'Toque aqui') : ''}
           </span>
         )}
-      </div>
+      </button>
     );
   }
 );
 
 const MusicPatterns = memo(() => {
+  const isTouch = useTouchDevice();
   const [patternSize, setPatternSize] = useState(3);
   const [slots, setSlots] = useState([null, null, null]);
+  const [targetSlotIndex, setTargetSlotIndex] = useState(null);
   const [selectedNoteId, setSelectedNoteId] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const { playNote, playPatternLoop, stopLoop } = useNotePlayer();
@@ -103,31 +119,71 @@ const MusicPatterns = memo(() => {
   const filledCount = activeSlots.filter(Boolean).length;
   const canPlay = filledCount >= patternSize;
 
-  const handleDropNote = useCallback((index, noteId) => {
+  const placeNoteAt = useCallback((index, noteId) => {
     setSlots((prev) => {
       const next = [...prev];
       next[index] = noteId;
       return next;
     });
+    setTargetSlotIndex(null);
     setSelectedNoteId(null);
   }, []);
 
-  const handlePlaceSelected = useCallback((index, noteId) => {
-    handleDropNote(index, noteId);
-  }, [handleDropNote]);
+  const handleNoteTap = useCallback(
+    (note) => {
+      playNote(note.frequency);
+      setSelectedNoteId(note.id);
 
-  const handleClearSlot = useCallback((index) => {
-    setSlots((prev) => {
-      const next = [...prev];
-      next[index] = null;
-      return next;
-    });
-  }, []);
+      if (targetSlotIndex !== null) {
+        placeNoteAt(targetSlotIndex, note.id);
+        return;
+      }
+
+      const firstEmptyIndex = slots.findIndex(
+        (slot, index) => index < patternSize && !slot
+      );
+
+      if (firstEmptyIndex !== -1) {
+        placeNoteAt(firstEmptyIndex, note.id);
+        return;
+      }
+
+      placeNoteAt(patternSize - 1, note.id);
+    },
+    [patternSize, placeNoteAt, playNote, slots, targetSlotIndex]
+  );
+
+  const handleSlotTap = useCallback(
+    (index) => {
+      if (slots[index]) {
+        setSlots((prev) => {
+          const next = [...prev];
+          next[index] = null;
+          return next;
+        });
+        setTargetSlotIndex(index);
+        setSelectedNoteId(null);
+        return;
+      }
+
+      setTargetSlotIndex(index);
+      setSelectedNoteId(null);
+    },
+    [slots]
+  );
+
+  const handleDropNote = useCallback(
+    (index, noteId) => {
+      placeNoteAt(index, noteId);
+    },
+    [placeNoteAt]
+  );
 
   const handleClearAll = useCallback(() => {
     stopLoop();
     setIsPlaying(false);
     setSlots([null, null, null]);
+    setTargetSlotIndex(null);
     setSelectedNoteId(null);
   }, [stopLoop]);
 
@@ -147,6 +203,8 @@ const MusicPatterns = memo(() => {
     stopLoop();
     setIsPlaying(false);
   }, [stopLoop]);
+
+  const selectedNote = selectedNoteId ? getNoteById(selectedNoteId) : null;
 
   return (
     <Fading time={800}>
@@ -177,8 +235,10 @@ const MusicPatterns = memo(() => {
                     handleStop();
                     setPatternSize(size);
                     setSlots((prev) => prev.map((note, index) => (index < size ? note : null)));
+                    setTargetSlotIndex(null);
+                    setSelectedNoteId(null);
                   }}
-                  className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                  className={`px-5 py-2 rounded-full text-sm font-medium transition-colors touch-manipulation ${
                     patternSize === size
                       ? 'bg-violet-600 text-white'
                       : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
@@ -191,19 +251,31 @@ const MusicPatterns = memo(() => {
           </div>
 
           <div className="bg-white/80 rounded-2xl p-6 shadow-sm border border-violet-100">
-            <h3 className="text-lg font-medium text-stone-900 mb-2">2. Toque ou arraste as notas</h3>
-            <p className="text-sm text-stone-500 mb-5">
-              Clique para ouvir. No celular ou tablet, toque numa nota e depois numa caixa do
-              player. No computador, arraste até o player.
+            <h3 className="text-lg font-medium text-stone-900 mb-2">2. Escolha as notas</h3>
+            <p className="text-sm text-stone-500 mb-3">
+              {isTouch
+                ? 'Toque numa nota para ouvir e preencher a próxima caixa. Toque numa caixa vazia para escolher onde colocar; toque numa caixa cheia para apagar.'
+                : 'Toque numa nota para ouvir e preencher a próxima caixa, ou arraste até o player.'}
             </p>
+
+            {(targetSlotIndex !== null || selectedNote) && (
+              <p className="text-sm font-medium text-violet-800 bg-violet-100 rounded-xl px-4 py-2 mb-5 text-center">
+                {targetSlotIndex !== null && !selectedNote
+                  ? `Caixa ${targetSlotIndex + 1} selecionada — agora toque uma nota colorida`
+                  : selectedNote
+                    ? `Nota ${selectedNote.label} — toque uma caixa do player`
+                    : ''}
+              </p>
+            )}
+
             <div className="flex flex-wrap justify-center gap-4">
               {MUSIC_NOTES.map((note) => (
                 <NoteSquare
                   key={note.id}
                   note={note}
                   selected={selectedNoteId === note.id}
-                  onPlay={playNote}
-                  onSelect={setSelectedNoteId}
+                  draggable={!isTouch}
+                  onTap={handleNoteTap}
                 />
               ))}
             </div>
@@ -222,7 +294,7 @@ const MusicPatterns = memo(() => {
                   type="button"
                   onClick={isPlaying ? handleStop : handlePlay}
                   disabled={!canPlay && !isPlaying}
-                  className={`px-6 py-3 rounded-full text-sm font-semibold transition-colors ${
+                  className={`px-6 py-3 rounded-full text-sm font-semibold transition-colors touch-manipulation ${
                     isPlaying
                       ? 'bg-rose-600 text-white hover:bg-rose-700'
                       : canPlay
@@ -235,7 +307,7 @@ const MusicPatterns = memo(() => {
                 <button
                   type="button"
                   onClick={handleClearAll}
-                  className="px-5 py-3 rounded-full text-sm font-medium border border-stone-300 text-stone-700 hover:border-stone-500 transition-colors"
+                  className="px-5 py-3 rounded-full text-sm font-medium border border-stone-300 text-stone-700 hover:border-stone-500 transition-colors touch-manipulation"
                 >
                   Limpar
                 </button>
@@ -249,10 +321,10 @@ const MusicPatterns = memo(() => {
                   index={index}
                   noteId={noteId}
                   active={index < patternSize}
+                  targeted={targetSlotIndex === index}
+                  isTouch={isTouch}
+                  onSlotTap={handleSlotTap}
                   onDropNote={handleDropNote}
-                  onClear={handleClearSlot}
-                  onPlaceSelected={handlePlaceSelected}
-                  selectedNoteId={selectedNoteId}
                 />
               ))}
             </div>
