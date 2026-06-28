@@ -26,8 +26,25 @@ export const album = {
   description:
     'Canções que habitam o espaço entre o dito, o não dito e o sentido.',
   cover: capaDisco,
-  spotifyUrl: 'https://open.spotify.com/album/5sdzn6dfbb1Js1JwjwWGwu',
-  spotifyEmbedId: '5sdzn6dfbb1Js1JwjwWGwu',
+  spotifyUrl: 'https://open.spotify.com/intl-pt/artist/6CSvDJzJEBjm70Y08h1mdj',
+  spotifyReleases: [
+    {
+      type: 'album',
+      embedId: '5sdzn6dfbb1Js1JwjwWGwu',
+      url: 'https://open.spotify.com/album/5sdzn6dfbb1Js1JwjwWGwu',
+      title: 'Nas Entrelinhas',
+      subtitle: 'EP · 2026',
+      trackCount: 5,
+    },
+    {
+      type: 'track',
+      embedId: '0cYP2pPe7cITKsmmBvV7le',
+      url: 'https://open.spotify.com/track/0cYP2pPe7cITKsmmBvV7le',
+      title: 'Solidão',
+      subtitle: 'Single · 2026',
+      trackCount: 1,
+    },
+  ],
   tracks: [
     {
       id: 1,

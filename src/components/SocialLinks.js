@@ -19,7 +19,7 @@ const SocialLinks = () => {
         target="_blank"
         rel="noopener noreferrer"
         className="text-stone-600 hover:text-stone-900 hover:scale-110 transition-all"
-        aria-label="Spotify — Nas Entrelinhas"
+        aria-label="Spotify — Luiz Pipa"
       >
         <FaSpotify className="h-5 w-5" />
       </a>

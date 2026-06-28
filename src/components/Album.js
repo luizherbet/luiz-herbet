@@ -4,13 +4,12 @@ import { album } from '../data/content';
 
 const isTrackOnSpotify = (item) => Boolean(item.onSpotify);
 
-const getSpotifyEmbedHeight = (trackCount) => 160 + trackCount * 80;
+const getSpotifyEmbedHeight = (trackCount) => 152 + Math.max(0, trackCount - 1) * 50;
+
+const getSpotifyEmbedUrl = (release) =>
+  `https://open.spotify.com/embed/${release.type}/${release.embedId}?utm_source=generator`;
 
 const Album = memo(() => {
-  const spotifyTrackCount = album.tracks.filter(isTrackOnSpotify).length;
-  const spotifyEmbedUrl = `https://open.spotify.com/embed/album/${album.spotifyEmbedId}?utm_source=generator`;
-  const embedHeight = getSpotifyEmbedHeight(spotifyTrackCount);
-
   return (
     <Fading time={800}>
       <section
@@ -44,20 +43,40 @@ const Album = memo(() => {
               rel="noopener noreferrer"
               className="mt-4 flex justify-center text-sm text-stone-600 hover:text-stone-900 transition-colors"
             >
-              Abrir no Spotify →
+              Ouvir no Spotify →
             </a>
           </div>
 
           <div className="flex-1 w-full min-w-0">
-            <div className="rounded-xl overflow-hidden mb-6 shadow-sm">
-              <iframe
-                src={spotifyEmbedUrl}
-                title={`${album.title} no Spotify`}
-                className="w-full border-0"
-                height={embedHeight}
-                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                loading="lazy"
-              />
+            <div className="space-y-6 mb-6">
+              {album.spotifyReleases.map((release) => (
+                <div key={release.embedId}>
+                  <div className="flex items-baseline justify-between gap-4 mb-2">
+                    <div>
+                      <p className="font-medium text-stone-900">{release.title}</p>
+                      <p className="text-xs text-stone-500">{release.subtitle}</p>
+                    </div>
+                    <a
+                      href={release.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-stone-500 hover:text-stone-900 transition-colors shrink-0"
+                    >
+                      Abrir →
+                    </a>
+                  </div>
+                  <div className="rounded-xl overflow-hidden shadow-sm">
+                    <iframe
+                      src={getSpotifyEmbedUrl(release)}
+                      title={`${release.title} no Spotify`}
+                      className="w-full border-0"
+                      height={getSpotifyEmbedHeight(release.trackCount)}
+                      allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+              ))}
             </div>
 
             <p className="text-xs uppercase tracking-wider text-stone-500 mb-3">
