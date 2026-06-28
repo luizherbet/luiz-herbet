@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 
-const DEFAULT_TITLE = 'Luiz Pipa | Artista — Música, Poesia e Artes Visuais';
+const DEFAULT_TITLE = 'Luiz Pipa | Artista — Música, Poesia, Artes Visuais e Educação';
 const DEFAULT_DESCRIPTION =
-  'Luiz Pipa é artista brasileiro multidisciplinar — músico, poeta e pintor. Disco, livro Nas Entrelinhas e quadros no site oficial.';
+  'Luiz Pipa é artista brasileiro multidisciplinar — músico, poeta e pintor. Disco, livro Nas Entrelinhas, quadros e atividades de educação computacional (BNCC).';
 
 function setMetaContent(selector, content) {
   let element = document.querySelector(selector);

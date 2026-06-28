@@ -4,6 +4,7 @@ import Hero from '../components/Hero';
 import Album from '../components/Album';
 import Book from '../components/Book';
 import Paintings from '../components/Paintings';
+import MusicPatterns from '../components/MusicPatterns';
 import Footer from '../components/Footer';
 
 const Home = memo(() => {
@@ -14,6 +15,7 @@ const Home = memo(() => {
       <Album />
       <Book />
       <Paintings />
+      <MusicPatterns />
       <Footer />
     </div>
   );

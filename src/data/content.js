@@ -16,8 +16,8 @@ import quadro12 from '../assets/Quadros/WhatsApp Image 2026-06-24 at 18.32.40.jp
 export const profile = {
   name: 'Luiz Pipa',
   photo: foto,
-  tagline: 'Música · Literatura · Artes visuais',
-  bio: 'Entre sons, palavras e cores. Neste espaço você encontra o disco Nas entrelinhas, o livro e a coleção de pinturas.',
+  tagline: 'Música · Literatura · Artes visuais · Educação computacional',
+  bio: 'Entre sons, palavras e cores. Neste espaço você encontra o disco Nas entrelinhas, o livro, a coleção de pinturas e atividades lúdicas alinhadas à BNCC.',
 };
 
 export const album = {
