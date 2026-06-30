@@ -6,7 +6,8 @@ const navItems = [
   { label: 'Disco', href: '/#disco' },
   { label: 'Livro', href: '/#livro' },
   { label: 'Quadros', href: '/#quadros' },
-  { label: 'BNCC', href: '/#bncc-musica' },
+  { label: 'Música', href: '/#bncc-musica' },
+  { label: 'Rotina', href: '/#bncc-rotina' },
 ];
 
 const Header = memo(() => {

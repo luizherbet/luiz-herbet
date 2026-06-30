@@ -1,21 +1,8 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import Fading from './Fading';
 import { MUSIC_NOTES, getNoteById } from '../data/musicNotes';
 import { useNotePlayer } from '../hooks/useNotePlayer';
-
-const useTouchDevice = () => {
-  const [isTouch, setIsTouch] = useState(false);
-
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(pointer: coarse)');
-    const update = () => setIsTouch(mediaQuery.matches);
-    update();
-    mediaQuery.addEventListener('change', update);
-    return () => mediaQuery.removeEventListener('change', update);
-  }, []);
-
-  return isTouch;
-};
+import { useTouchDevice } from '../hooks/useTouchDevice';
 
 const NoteSquare = memo(({ note, onTap, selected, draggable }) => (
   <button
