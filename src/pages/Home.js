@@ -16,8 +16,10 @@ const Home = memo(() => {
       <Album />
       <Book />
       <Paintings />
-      <MusicPatterns />
-      <RoutineAlgorithm />
+      <div id="bncc-atividades" className="scroll-mt-24">
+        <MusicPatterns />
+        <RoutineAlgorithm />
+      </div>
       <Footer />
     </div>
   );
