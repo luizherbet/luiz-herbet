@@ -8,11 +8,6 @@
   font-family: 'Fraunces', 'Georgia', serif;
 }
 
-.freelancer-hero-image {
-  animation: freelancer-kenburns 18s ease-out forwards;
-  transform-origin: center 20%;
-}
-
 .freelancer-fade {
   opacity: 0;
   transform: translateY(18px);
@@ -20,19 +15,23 @@
 }
 
 .freelancer-delay-1 {
-  animation-delay: 0.15s;
+  animation-delay: 0.1s;
 }
 
 .freelancer-delay-2 {
-  animation-delay: 0.35s;
+  animation-delay: 0.25s;
 }
 
 .freelancer-delay-3 {
-  animation-delay: 0.55s;
+  animation-delay: 0.4s;
 }
 
 .freelancer-delay-4 {
-  animation-delay: 0.75s;
+  animation-delay: 0.55s;
+}
+
+.freelancer-delay-5 {
+  animation-delay: 0.7s;
 }
 
 @keyframes freelancer-rise {
@@ -42,17 +41,7 @@
   }
 }
 
-@keyframes freelancer-kenburns {
-  from {
-    transform: scale(1.08);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .freelancer-hero-image,
   .freelancer-fade {
     animation: none;
     opacity: 1;

@@ -52,27 +52,36 @@ const Home = memo(() => {
         </nav>
       </header>
 
-      <section id="inicio" className="relative min-h-[100svh] overflow-hidden">
-        <img
-          src={foto}
-          alt="Luiz Herbet, desenvolvedor freelancer"
-          className="absolute inset-0 h-full w-full object-cover object-[center_20%] freelancer-hero-image"
+      <section id="inicio" className="relative min-h-[100svh] overflow-hidden bg-[#0c1f1a]">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(45,212,191,0.22),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,rgba(251,191,36,0.12),transparent_45%)]" />
+        <div
+          className="absolute inset-0 opacity-[0.07]"
+          style={{
+            backgroundImage:
+              'linear-gradient(rgba(232,240,236,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(232,240,236,0.5) 1px, transparent 1px)',
+            backgroundSize: '48px 48px',
+          }}
+          aria-hidden="true"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0c1f1a] via-[#0c1f1a]/55 to-[#0c1f1a]/25" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(45,212,191,0.18),transparent_55%)]" />
 
         <div className="relative z-10 min-h-[100svh] flex flex-col justify-end px-6 md:px-10 pb-14 md:pb-20 max-w-5xl">
-          <p className="freelancer-fade freelancer-delay-1 mb-4 text-xs md:text-sm uppercase tracking-[0.35em] text-teal-100/90">
+          <img
+            src={foto}
+            alt="Luiz Herbet"
+            className="freelancer-fade freelancer-delay-1 mb-6 h-16 w-16 md:h-20 md:w-20 rounded-full object-cover object-[center_18%] ring-2 ring-white/25"
+          />
+          <p className="freelancer-fade freelancer-delay-2 mb-4 text-xs md:text-sm uppercase tracking-[0.35em] text-teal-100/90">
             Desenvolvedor freelancer
           </p>
-          <h1 className="freelancer-fade freelancer-delay-2 text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white leading-[0.95] mb-5">
+          <h1 className="freelancer-fade freelancer-delay-3 text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white leading-[0.95] mb-5">
             Luiz Herbet
           </h1>
-          <p className="freelancer-fade freelancer-delay-3 max-w-xl text-base md:text-lg text-white/80 leading-relaxed mb-8">
+          <p className="freelancer-fade freelancer-delay-4 max-w-xl text-base md:text-lg text-white/80 leading-relaxed mb-8">
             Eu construo experiências digitais claras e úteis — sites, sistemas e
             automações que ajudam o seu negócio a aparecer e vender melhor.
           </p>
-          <div className="freelancer-fade freelancer-delay-4 flex flex-wrap gap-4">
+          <div className="freelancer-fade freelancer-delay-5 flex flex-wrap gap-4">
             <a
               href={WHATSAPP}
               target="_blank"
@@ -186,7 +195,7 @@ const Home = memo(() => {
 
       <footer className="bg-[#0c1f1a] text-[#e8f0ec]/55 px-6 md:px-10 py-8 text-sm flex flex-col sm:flex-row justify-between gap-3">
         <span>© {new Date().getFullYear()} Luiz Herbet</span>
-        <span>Desenvolvimento web · Cascavel / remoto</span>
+        <span>Desenvolvimento web · remoto</span>
       </footer>
     </div>
   );
