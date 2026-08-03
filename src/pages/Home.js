@@ -62,42 +62,39 @@ const Home = memo(() => {
         <div className="absolute inset-0 bg-[#0c1f1a]/55" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0c1f1a]/80 via-[#0c1f1a]/45 to-[#0c1f1a]/20" />
 
-        <div className="relative z-10 min-h-[100svh] flex flex-col md:flex-row md:items-end md:justify-between gap-10 px-6 md:px-10 pb-14 md:pb-20 pt-28">
-          <div className="max-w-2xl order-2 md:order-1">
-            <p className="freelancer-fade freelancer-delay-1 mb-4 text-xs md:text-sm uppercase tracking-[0.35em] text-teal-100/90">
-              Desenvolvedor freelancer
-            </p>
-            <h1 className="freelancer-fade freelancer-delay-2 text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white leading-[0.95] mb-5">
-              Luiz Herbet
-            </h1>
-            <p className="freelancer-fade freelancer-delay-3 max-w-xl text-base md:text-lg text-white/80 leading-relaxed mb-8">
-              Eu construo experiências digitais claras e úteis — sites, sistemas e
-              automações que ajudam o seu negócio a aparecer e vender melhor.
-            </p>
-            <div className="freelancer-fade freelancer-delay-4 flex flex-wrap gap-4">
-              <a
-                href={WHATSAPP}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-[#e8f0ec] text-[#0c1f1a] px-6 py-3 text-sm font-medium hover:bg-white transition-colors"
-              >
-                Pedir um orçamento
-              </a>
-              <a
-                href="#servicos"
-                className="inline-flex items-center border border-white/40 text-white px-6 py-3 text-sm font-medium hover:border-white transition-colors"
-              >
-                Ver serviços
-              </a>
-            </div>
-          </div>
-
-          <div className="order-1 md:order-2 self-end md:self-center shrink-0">
+        <div className="relative z-10 min-h-[100svh] flex flex-col justify-end px-6 md:px-10 pb-14 md:pb-20 max-w-5xl pt-28">
+          <div className="freelancer-fade freelancer-delay-1 mb-6 h-28 w-28 md:h-40 md:w-40 lg:h-44 lg:w-44 rounded-full overflow-hidden ring-2 ring-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.35)] shrink-0">
             <img
               src={foto}
               alt="Luiz Herbet"
-              className="freelancer-fade freelancer-delay-2 h-28 w-28 md:h-40 md:w-40 lg:h-44 lg:w-44 rounded-full object-cover object-[center_12%] ring-2 ring-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.35)]"
+              className="h-full w-full object-cover object-[48%_6%] scale-[1.45] origin-center"
             />
+          </div>
+          <p className="freelancer-fade freelancer-delay-2 mb-4 text-xs md:text-sm uppercase tracking-[0.35em] text-teal-100/90">
+            Desenvolvedor freelancer
+          </p>
+          <h1 className="freelancer-fade freelancer-delay-3 text-5xl md:text-7xl lg:text-8xl font-light tracking-tight text-white leading-[0.95] mb-5">
+            Luiz Herbet
+          </h1>
+          <p className="freelancer-fade freelancer-delay-4 max-w-xl text-base md:text-lg text-white/80 leading-relaxed mb-8">
+            Eu construo experiências digitais claras e úteis — sites, sistemas e
+            automações que ajudam o seu negócio a aparecer e vender melhor.
+          </p>
+          <div className="freelancer-fade freelancer-delay-5 flex flex-wrap gap-4">
+            <a
+              href={WHATSAPP}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center bg-[#e8f0ec] text-[#0c1f1a] px-6 py-3 text-sm font-medium hover:bg-white transition-colors"
+            >
+              Pedir um orçamento
+            </a>
+            <a
+              href="#servicos"
+              className="inline-flex items-center border border-white/40 text-white px-6 py-3 text-sm font-medium hover:border-white transition-colors"
+            >
+              Ver serviços
+            </a>
           </div>
         </div>
       </section>
