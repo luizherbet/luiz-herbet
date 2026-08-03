@@ -6,7 +6,7 @@ import Home from './pages/Home';
 function App() {
   return (
     <Router>
-      <div className="scroll-smooth pipa-font min-h-screen bg-black">
+      <div className="scroll-smooth freelancer-font min-h-screen bg-[#e8f0ec]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="*" element={<Home />} />

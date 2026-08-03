@@ -1,17 +1,61 @@
-.pipa-font {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+.freelancer-font {
+  font-family: 'Manrope', system-ui, sans-serif;
 }
 
-.pipa-font h1,
-.pipa-font h2,
-.pipa-font h3 {
-  font-family: 'Cormorant Garamond', 'Georgia', serif;
+.freelancer-font h1,
+.freelancer-font h2,
+.freelancer-font h3 {
+  font-family: 'Fraunces', 'Georgia', serif;
 }
 
-.pipa-font p,
-.pipa-font a,
-.pipa-font button,
-.pipa-font li,
-.pipa-font span {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+.freelancer-hero-image {
+  animation: freelancer-kenburns 18s ease-out forwards;
+  transform-origin: center 20%;
+}
+
+.freelancer-fade {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: freelancer-rise 0.9s ease forwards;
+}
+
+.freelancer-delay-1 {
+  animation-delay: 0.15s;
+}
+
+.freelancer-delay-2 {
+  animation-delay: 0.35s;
+}
+
+.freelancer-delay-3 {
+  animation-delay: 0.55s;
+}
+
+.freelancer-delay-4 {
+  animation-delay: 0.75s;
+}
+
+@keyframes freelancer-rise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes freelancer-kenburns {
+  from {
+    transform: scale(1.08);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .freelancer-hero-image,
+  .freelancer-fade {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
