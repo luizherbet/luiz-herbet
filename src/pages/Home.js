@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import foto from '../assets/img/Foto.jpeg';
+import fotoAvatar from '../assets/img/Foto-avatar.jpeg';
 
 const WHATSAPP =
   'https://wa.me/554599947050?text=Olá!%20Gostaria%20de%20conversar%20sobre%20um%20projeto%20de%20desenvolvimento%20web.';
@@ -65,9 +65,9 @@ const Home = memo(() => {
         <div className="relative z-10 min-h-[100svh] flex flex-col justify-end px-6 md:px-10 pb-14 md:pb-20 max-w-5xl pt-28">
           <div className="freelancer-fade freelancer-delay-1 mb-6 h-28 w-28 md:h-40 md:w-40 lg:h-44 lg:w-44 rounded-full overflow-hidden ring-2 ring-white/30 shadow-[0_20px_50px_rgba(0,0,0,0.35)] shrink-0">
             <img
-              src={foto}
+              src={fotoAvatar}
               alt="Luiz Herbet"
-              className="h-full w-full object-cover object-[48%_6%] scale-[1.45] origin-center"
+              className="h-full w-full object-cover object-center"
             />
           </div>
           <p className="freelancer-fade freelancer-delay-2 mb-4 text-xs md:text-sm uppercase tracking-[0.35em] text-teal-100/90">
