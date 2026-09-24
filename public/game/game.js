@@ -260,8 +260,8 @@
     return {
       cx: state.W * 0.5,
       cy: state.H * 0.48,
-      rx: state.W * 0.38,
-      ry: state.H * 0.28,
+      rx: state.W * 0.46,
+      ry: state.H * 0.16,
     };
   }
 
@@ -321,8 +321,20 @@
     const grd = ctx.createLinearGradient(cx - rx, cy - ry, cx + rx, cy + ry);
     grd.addColorStop(0, main ? "#f6c9d7" : "#e0b4c3");
     grd.addColorStop(1, main ? "#d89aaf" : "#c98ea4");
+    // pontas afiladas (fusiforme), não elipse oval
     ctx.beginPath();
-    ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2);
+    ctx.moveTo(cx - rx, cy);
+    ctx.bezierCurveTo(
+      cx - rx * 0.45, cy - ry * 1.15,
+      cx + rx * 0.45, cy - ry * 1.15,
+      cx + rx, cy
+    );
+    ctx.bezierCurveTo(
+      cx + rx * 0.45, cy + ry * 1.15,
+      cx - rx * 0.45, cy + ry * 1.15,
+      cx - rx, cy
+    );
+    ctx.closePath();
     ctx.fillStyle = grd;
     ctx.fill();
     ctx.strokeStyle = "#9a5f74";
@@ -332,17 +344,17 @@
 
   function drawNucleus(g) {
     ctx.beginPath();
-    ctx.ellipse(g.cx, g.cy, g.rx * 0.16, g.ry * 0.28, 0, 0, Math.PI * 2);
+    ctx.ellipse(g.cx, g.cy, Math.max(18, g.rx * 0.1), Math.max(12, g.ry * 0.45), 0, 0, Math.PI * 2);
     ctx.fillStyle = "#6b3f7a";
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(g.cx - 6, g.cy - 4, 5, 4, 0, 0, Math.PI * 2);
+    ctx.ellipse(g.cx - 5, g.cy - 3, 4, 3, 0, 0, Math.PI * 2);
     ctx.fillStyle = "#9b6aad";
     ctx.fill();
     ctx.fillStyle = "#4a2c57";
     ctx.font = "700 11px 'Source Sans 3', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("núcleo", g.cx, g.cy + g.ry * 0.28 + 14);
+    ctx.fillText("núcleo", g.cx, g.cy + Math.max(18, g.ry * 0.45) + 14);
   }
 
   function drawOrganelles(g) {
@@ -600,8 +612,9 @@
       b.onclick = () => {
         if (i === item.answer) {
           b.classList.add("ok");
-          state.quizDone[`${s.id}:${i}`] = true;
-          setTimeout(() => renderQuiz(s), 350);
+          state.quizDone[`${s.id}:${nextIdx}`] = true;
+          clearFeedback();
+          setTimeout(() => renderQuiz(s), 280);
         } else {
           b.classList.add("bad");
           setFeedback(false, "Não é essa. Tente outra.");
