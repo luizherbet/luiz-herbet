@@ -1499,26 +1499,29 @@
       ctx.fillText(item.label, x + w / 2, 47);
     });
 
-    // cena molecular
+    // cena molecular: cascata em cima, filamentos abaixo (perto o bastante p/ ligar)
     const sceneTop = 64;
     const sceneH = H - sceneTop - 18;
-    const actinY = sceneTop + sceneH * 0.22;
-    const myoY = sceneTop + sceneH * 0.78;
-    const midY = sceneTop + sceneH * 0.48;
+    const midY = sceneTop + sceneH * 0.32;
+    const actinY = sceneTop + sceneH * 0.62;
+    const myoY = actinY + 42;
     const x0 = W * 0.08;
     const x1 = W * 0.92;
 
-    // ACTINA (filamento fino)
+    // ACTINA (filamento fino) — logo acima da miosina
     ctx.strokeStyle = "#3b82c4";
-    ctx.lineWidth = 8;
+    ctx.lineWidth = 7;
     ctx.lineCap = "round";
     ctx.beginPath();
     ctx.moveTo(x0, actinY);
     ctx.lineTo(x1, actinY);
     ctx.stroke();
-    for (let x = x0 + 10; x < x1; x += 14) {
+    const actinSites = [];
+    for (let x = x0 + 16; x < x1 - 8; x += 16) {
+      const sy = actinY;
+      actinSites.push({ x, y: sy });
       ctx.beginPath();
-      ctx.arc(x, actinY + Math.sin((x + state.anim) * 0.08) * 2, 5.5, 0, Math.PI * 2);
+      ctx.arc(x, sy, 6, 0, Math.PI * 2);
       ctx.fillStyle = "#5a9fd4";
       ctx.fill();
     }
@@ -1527,58 +1530,79 @@
     ctx.textAlign = "left";
     ctx.fillText("ACTINA", x0, actinY - 14);
 
-    // MIOSINA (filamento espesso)
+    // MIOSINA (filamento espesso) — logo abaixo; cabeças sobem até a actina
     const myoActive = step >= 5;
+    const bound = step >= 6;
     ctx.strokeStyle = myoActive ? "#c45c7a" : "#b85a72";
     ctx.lineWidth = myoActive ? 6 : 4.5;
     ctx.beginPath();
     ctx.moveTo(x0 + 20, myoY);
     ctx.lineTo(x1 - 20, myoY);
     ctx.stroke();
-    const headCount = 9;
+
+    const headCount = Math.min(actinSites.length, 10);
+    const siteStart = Math.max(0, Math.floor((actinSites.length - headCount) / 2));
     for (let i = 0; i < headCount; i++) {
-      const hx = x0 + 40 + i * ((x1 - x0 - 80) / (headCount - 1));
-      const reach = step >= 6
-        ? ease(Math.min(1, t * 1.2 - i * 0.05)) * (actinY - myoY + 8)
-        : myoActive
-          ? 18 + Math.sin(state.anim * 0.12 + i) * 4
-          : 10;
-      const tipY = myoY - reach;
-      ctx.strokeStyle = myoActive ? "#1e4e8c" : "#2b6cb0";
-      ctx.lineWidth = 2.2;
+      const site = actinSites[siteStart + i];
+      const hx = site.x;
+      let tipY;
+      let tipX = hx;
+      if (bound) {
+        const k = ease(Math.min(1, t * 1.25 - i * 0.06));
+        // sobe até encostar na actina
+        tipY = lerp(myoY - 12, actinY + 7, k);
+        tipX = hx;
+      } else if (myoActive) {
+        tipY = myoY - (16 + Math.sin(state.anim * 0.14 + i) * 3);
+        tipX = hx + Math.sin(state.anim * 0.1 + i) * 2;
+      } else {
+        tipY = myoY - 10;
+        tipX = hx;
+      }
+
+      ctx.strokeStyle = bound ? "#c45c3a" : myoActive ? "#1e4e8c" : "#2b6cb0";
+      ctx.lineWidth = bound ? 2.8 : 2.2;
       ctx.beginPath();
       ctx.moveTo(hx, myoY - 2);
-      ctx.lineTo(hx + (i % 2 ? 6 : -6), tipY);
+      ctx.lineTo(tipX, tipY);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(hx + (i % 2 ? 6 : -6), tipY, myoActive ? 4.5 : 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = myoActive ? "#2563a8" : "#3a7ec4";
+      ctx.arc(tipX, tipY, bound ? 5 : myoActive ? 4.5 : 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = bound ? "#1e4e8c" : myoActive ? "#2563a8" : "#3a7ec4";
       ctx.fill();
+
+      // ao ligar, destaca o sítio de actina
+      if (bound && tipY <= actinY + 10) {
+        ctx.beginPath();
+        ctx.arc(site.x, site.y, 8, 0, Math.PI * 2);
+        ctx.strokeStyle = `rgba(196,92,58,${0.45 + 0.35 * Math.sin(state.anim * 0.15 + i)})`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
       if (step >= 4) {
-        // fosfato nas cabeças
         const showP = step > 4 || ease(t) > i / headCount;
         if (showP) {
           ctx.beginPath();
-          ctx.arc(hx + (i % 2 ? 14 : -14), myoY - 8, 5, 0, Math.PI * 2);
+          ctx.arc(hx + 10, myoY - 6, 5, 0, Math.PI * 2);
           ctx.fillStyle = "#e2b84a";
           ctx.fill();
           ctx.fillStyle = "#1c2a33";
           ctx.font = "700 8px 'Source Sans 3', sans-serif";
           ctx.textAlign = "center";
-          ctx.fillText("P", hx + (i % 2 ? 14 : -14), myoY - 5);
+          ctx.fillText("P", hx + 10, myoY - 3);
         }
       }
     }
     ctx.fillStyle = "#b85a72";
     ctx.font = "700 11px 'Source Sans 3', sans-serif";
     ctx.textAlign = "left";
-    ctx.fillText(myoActive ? "MIOSINA ATIVA" : "MIOSINA", x0, myoY + 22);
+    ctx.fillText(bound ? "MIOSINA ↔ ACTINA" : myoActive ? "MIOSINA ATIVA" : "MIOSINA", x0, myoY + 20);
 
-    // posições dos atores
+    // posições dos atores (região superior)
     const camHome = { x: W * 0.28, y: midY };
     const mlckHome = { x: W * 0.62, y: midY };
     const complexBound = step >= 2;
-    const complexActive = step >= 3;
 
     // movimento do complexo em direção à MLCK (step 3)
     let camPos = { ...camHome };
@@ -1593,9 +1617,9 @@
     let mlckPos = { ...mlckHome };
     if (step === 4) {
       const k = ease(Math.min(1, t * 1.1));
-      mlckPos = { x: lerp(mlckHome.x, cx, k * 0.3), y: lerp(mlckHome.y, myoY - 36, k) };
+      mlckPos = { x: lerp(mlckHome.x, cx, k * 0.3), y: lerp(mlckHome.y, myoY - 28, k) };
     } else if (step > 4) {
-      mlckPos = { x: cx + 20, y: myoY - 36 };
+      mlckPos = { x: cx + 30, y: myoY - 28 };
     }
 
     // CALMODULINA
@@ -1713,7 +1737,7 @@
       ctx.fillStyle = "#c45c3a";
       ctx.font = "700 13px 'Source Sans 3', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("pontes cruzadas: actina ↔ miosina", cx, (actinY + myoY) / 2);
+      ctx.fillText("pontes cruzadas: miosina ligada à actina", cx, actinY - 28);
     }
 
     // idle hint
