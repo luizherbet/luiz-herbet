@@ -2,10 +2,11 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#d9e4ec" />
   <base href="/game/" />
-  <title>Contração Muscular — Guia Didático</title>
-  <link rel="stylesheet" href="/game/style.css?v=fit1" />
+  <title>Monte a Célula — Histologia</title>
+  <link rel="stylesheet" href="/game/style.css?v=build1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -14,22 +15,22 @@
   <div id="chooser" class="screen">
     <div class="chooser-inner">
       <p class="eyebrow">Ross &amp; Pawlina · Histologia (2016)</p>
-      <h1>Como o músculo se contrai?</h1>
-      <p class="lede">Escolha o tipo. Guia curto, figura grande, etapa a etapa.</p>
+      <h1>Monte a célula muscular</h1>
+      <p class="lede">Escolha o tipo e encaixe os elementos nos lugares certos. Tem peça-armadilha do outro tipo.</p>
       <div class="choice-grid">
         <button type="button" id="pick-smooth" class="choice-card">
           <strong>Músculo liso</strong>
-          <span>Fusiforme · cavéolas + REL · CaM–MLCK</span>
+          <span>Fusiforme · núcleos centrais · cavéolas · CaM–MLCK</span>
         </button>
         <button type="button" id="pick-striated" class="choice-card">
           <strong>Estriado esquelético</strong>
-          <span>Sarcômero · tríade · troponina</span>
+          <span>Cilindro · sarcômero · tríade · troponina</span>
         </button>
       </div>
     </div>
   </div>
 
-  <div id="sim" class="screen hidden">
+  <div id="board" class="screen hidden">
     <header class="sim-bar">
       <button type="button" id="btn-home" class="btn-link">← Tipos</button>
       <div class="sim-bar-title">
@@ -37,42 +38,36 @@
         <strong id="sim-title"></strong>
       </div>
       <div class="sim-bar-meta">
-        <span id="state-badge">Relaxada</span>
-        <span id="length-readout">—</span>
+        <span id="score-badge">0 / 0</span>
+        <span id="hint-badge">Toque numa peça</span>
       </div>
     </header>
 
-    <div class="sim-grid">
-      <section class="viewport">
-        <canvas id="cell" width="960" height="560"></canvas>
+    <div class="build-grid">
+      <section class="stage-wrap">
+        <div id="stage" class="stage" aria-label="Área da célula">
+          <svg id="cell-svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet"></svg>
+          <div id="slots" class="slots"></div>
+        </div>
+        <p id="tip" class="tip">Selecione uma peça abaixo e toque no encaixe certo.</p>
       </section>
 
-      <aside class="lesson">
-        <div class="lesson-top">
-          <span id="phase-tag" class="phase-tag"></span>
-          <span id="step-count"></span>
+      <aside class="tray-panel">
+        <div class="tray-head">
+          <h2>Peças</h2>
+          <button type="button" id="btn-reset" class="btn ghost compact">Limpar</button>
         </div>
-        <div class="progress"><i id="progress-fill"></i></div>
-        <h2 id="step-title"></h2>
-        <p id="step-body"></p>
-        <div class="observe-box">
-          <strong>Na figura</strong>
-          <p id="step-observe"></p>
-        </div>
-        <div class="contrast-box" id="contrast-box">
-          <strong>vs outro tipo</strong>
-          <p id="step-contrast"></p>
-        </div>
-        <ul id="step-keys" class="keypoints"></ul>
-        <p id="step-source" class="source-line"></p>
-        <div class="actions">
-          <button type="button" id="btn-prev" class="btn ghost">Anterior</button>
-          <button type="button" id="btn-next" class="btn primary">Próximo</button>
+        <p class="tray-help">Arraste (desktop) ou toque na peça e depois no encaixe (celular).</p>
+        <div id="tray" class="tray" role="list"></div>
+        <div id="win" class="win hidden">
+          <strong>Célula montada!</strong>
+          <p id="win-body"></p>
+          <button type="button" id="btn-again" class="btn primary">Jogar de novo</button>
         </div>
       </aside>
     </div>
   </div>
 
-  <script src="/game/game.js?v=fit1"></script>
+  <script src="/game/game.js?v=build1"></script>
 </body>
 </html>
