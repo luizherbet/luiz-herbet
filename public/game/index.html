@@ -5,69 +5,66 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#d9e4ec" />
   <base href="/game/" />
-  <title>Monte a Célula — Histologia</title>
-  <link rel="stylesheet" href="/game/style.css?v=build2" />
+  <title>Músculo liso — etapas</title>
+  <link rel="stylesheet" href="/game/style.css?v=steps1" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
-  <div id="chooser" class="screen">
-    <div class="chooser-inner">
-      <p class="eyebrow">Ross &amp; Pawlina · Histologia (2016)</p>
-      <h1>Monte a célula muscular</h1>
-      <p class="lede">Arraste os elementos para os encaixes. O nome só aparece quando estiver certo.</p>
-      <div class="choice-grid">
-        <button type="button" id="pick-smooth" class="choice-card">
-          <strong>Músculo liso</strong>
-          <span>Célula fusiforme</span>
-        </button>
-        <button type="button" id="pick-striated" class="choice-card">
-          <strong>Estriado esquelético</strong>
-          <span>Fibra com sarcômeros</span>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <div id="board" class="screen hidden">
+  <div id="app" class="screen">
     <header class="sim-bar">
-      <button type="button" id="btn-home" class="btn-link">← Tipos</button>
       <div class="sim-bar-title">
-        <span id="sim-eyebrow"></span>
-        <strong id="sim-title"></strong>
+        <span>Músculo liso</span>
+        <strong id="step-title">Célula fusiforme</strong>
       </div>
       <div class="sim-bar-meta">
-        <span id="score-badge">0 / 0</span>
+        <span id="step-badge">1 / 5</span>
       </div>
     </header>
 
     <div class="build-grid">
       <section class="stage-wrap">
-        <div id="stage" class="stage" aria-label="Área da célula">
-          <svg id="cell-svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet"></svg>
+        <div id="stage" class="stage">
+          <canvas id="cell" width="960" height="560"></canvas>
           <div id="slots" class="slots"></div>
         </div>
-        <p id="tip" class="tip">Arraste cada elemento até o encaixe certo.</p>
       </section>
 
       <aside class="tray-panel">
-        <div class="tray-head">
-          <h2>Elementos</h2>
-          <button type="button" id="btn-reset" class="btn ghost compact">Limpar</button>
+        <div class="lesson-top">
+          <span id="phase-tag" class="phase-tag">Forma</span>
+          <span id="step-count">Etapa 1</span>
         </div>
-        <p class="tray-help">Arraste para a célula. Nomes aparecem só no encaixe correto.</p>
-        <div id="tray" class="tray" role="list"></div>
-        <div id="win" class="win hidden">
-          <strong>Célula montada!</strong>
-          <p id="win-body"></p>
-          <button type="button" id="btn-again" class="btn primary">Jogar de novo</button>
+        <div class="progress"><i id="progress-fill"></i></div>
+        <h2 id="prompt-title">Qual a forma desta célula?</h2>
+        <p id="prompt-body">Observe a célula já com núcleo e organelas. Digite o formato característico.</p>
+
+        <div id="text-block" class="answer-block">
+          <input id="text-input" class="text-input" type="text" autocomplete="off" spellcheck="false" placeholder="Digite aqui…" />
+          <button type="button" id="btn-check" class="btn primary">Verificar</button>
+          <p id="text-feedback" class="feedback"></p>
+        </div>
+
+        <div id="quiz-block" class="answer-block hidden">
+          <div id="quiz-list" class="quiz-list"></div>
+          <p id="quiz-feedback" class="feedback"></p>
+        </div>
+
+        <div id="drag-block" class="answer-block hidden">
+          <p class="tray-help" id="drag-help">Arraste o elemento até o encaixe marcado.</p>
+          <div id="tray" class="tray"></div>
+          <p id="drag-feedback" class="feedback"></p>
+        </div>
+
+        <div class="actions">
+          <button type="button" id="btn-next" class="btn primary" disabled>Próxima</button>
         </div>
       </aside>
     </div>
   </div>
 
   <div id="ghost" class="ghost hidden" aria-hidden="true"></div>
-  <script src="/game/game.js?v=build2"></script>
+  <script src="/game/game.js?v=steps1"></script>
 </body>
 </html>
