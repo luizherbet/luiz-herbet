@@ -30,6 +30,8 @@
     showCaOut: false,
     showCaRel: false,
     showCaM: false,
+    showRelNearCaveolae: false,
+    caAnim: { playing: false, phase: "idle", t0: 0, done: false },
     showMlck: false,
   };
 
@@ -285,26 +287,24 @@
       feedback: "Correto — no liso a miosina é lateral-polar e não tem zona nua central (diferente do estriado bipolar).",
     },
     {
-      id: "ca_out",
+      id: "calcio",
       phase: "Cálcio",
-      title: "Traga Ca²⁺ de fora da célula",
-      body: "Arraste o reservatório de Ca²⁺ extracelular até as cavéolas.",
-      type: "place",
-      piece: "ca_out",
-      slot: { id: "ca_out", x: 12, y: 48 },
-      unlock: () => { state.showCaOut = true; },
-      feedback: "Ca²⁺ entrando pelas cavéolas.",
-    },
-    {
-      id: "ca_rel",
-      phase: "Cálcio",
-      title: "Liberte Ca²⁺ do REL",
-      body: "A entrada nas cavéolas é pouca — o REL libera mais Ca²⁺. Arraste o reservatório interno.",
-      type: "place",
-      piece: "ca_rel",
-      slot: { id: "ca_rel", x: 72, y: 48 },
-      unlock: () => { state.showCaRel = true; },
-      feedback: "Ca²⁺ liberado do REL.",
+      title: "Entrada de Ca²⁺ e liberação do REL",
+      body: "O REL fica junto das cavéolas e armazena Ca²⁺. Toque no botão para ver: ① Ca²⁺ entra pela membrana nas cavéolas ② IP₃ estimula o REL ③ o REL libera mais Ca²⁺.",
+      type: "anim",
+      onEnter: () => {
+        state.viewMode = "cell";
+        state.focus = "caveolae";
+        state.showRelNearCaveolae = true;
+        state.caAnim = { playing: false, phase: "idle", t0: 0, done: false };
+        state.showCaOut = false;
+        state.showCaRel = false;
+      },
+      onLeave: () => {
+        state.focus = null;
+        state.caAnim = { playing: false, phase: "idle", t0: 0, done: state.caAnim.done };
+      },
+      feedback: "Ca²⁺ entrou pelas cavéolas e o REL liberou mais Ca²⁺ (via IP₃).",
     },
     {
       id: "calmodulina",
@@ -417,8 +417,10 @@
     if (state.showActin) drawActin(g);
     if (state.showMyosin) drawMyosin(g, state.focus === "myosin");
     if (state.focus === "myosin") drawMyosinCallout(g);
-    if (state.showCaOut) drawCaInflux(g);
-    if (state.showCaRel) drawCaRel(g);
+    if (state.showRelNearCaveolae || state.caAnim.playing || state.caAnim.done) {
+      drawRelNearCaveolae(g, state.caAnim.phase);
+      drawCalciumAnimation(g);
+    }
     if (state.showCaM) drawCaM(g);
     if (state.showMlck) drawMlck(g);
 
@@ -896,30 +898,181 @@
     }
   }
 
-  function drawCaInflux(g) {
-    const t = (state.anim % 60) / 60;
-    CAVEOLAE.filter((c) => c[1] < 0).forEach(([tt], i) => {
-      const rim = spindlePoint(g, tt, -0.98);
-      const inn = spindlePoint(g, tt, -0.35);
-      const k = (t + i * 0.12) % 1;
-      const x = rim.x + (inn.x - rim.x) * k;
-      const y = rim.y + (inn.y - rim.y) * k;
+  function drawRelNearCaveolae(g, phase) {
+    const sites = CAVEOLAE.filter((c) => c[1] < 0).slice(0, 5);
+    sites.forEach(([t], i) => {
+      const rim = spindlePoint(g, t, -0.98);
+      const rel = spindlePoint(g, t, -0.42);
+      ctx.strokeStyle = phase === "ip3" || phase === "release" ? "#0d6e6e" : "#2f7d9a";
+      ctx.lineWidth = phase === "ip3" ? 3 : 2.2;
       ctx.beginPath();
-      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
-      ctx.fillStyle = "#3498db";
-      ctx.fill();
+      ctx.moveTo(rel.x - 10, rel.y - 6);
+      ctx.bezierCurveTo(rel.x - 2, rel.y - 14, rel.x + 8, rel.y + 10, rel.x + 14, rel.y);
+      ctx.bezierCurveTo(rel.x + 6, rel.y + 12, rel.x - 8, rel.y + 8, rel.x - 10, rel.y - 6);
+      ctx.stroke();
+
+      if (phase === "idle" || phase === "entry" || phase === "ip3" || !phase) {
+        for (let k = 0; k < 3; k++) {
+          ctx.beginPath();
+          ctx.arc(rel.x - 4 + k * 5, rel.y + (k % 2) * 3, 2.4, 0, Math.PI * 2);
+          ctx.fillStyle = "rgba(26,106,122,0.85)";
+          ctx.fill();
+        }
+      }
+
+      if (i === 1) {
+        ctx.fillStyle = "#1a6a7a";
+        ctx.font = "700 11px 'Source Sans 3', sans-serif";
+        ctx.textAlign = "left";
+        ctx.fillText("REL", rel.x + 16, rel.y - 8);
+        ctx.font = "600 10px 'Source Sans 3', sans-serif";
+        ctx.fillStyle = "#5a6d78";
+        ctx.fillText("estoque de Ca²⁺", rel.x + 16, rel.y + 5);
+      }
+
+      ctx.setLineDash([3, 3]);
+      ctx.strokeStyle = "rgba(13,110,110,0.35)";
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(rim.x, rim.y + 6);
+      ctx.lineTo(rel.x, rel.y - 4);
+      ctx.stroke();
+      ctx.setLineDash([]);
     });
   }
 
-  function drawCaRel(g) {
-    const t = (state.anim % 50) / 50;
-    for (let i = 0; i < 6; i++) {
-      const p = spindlePoint(g, 0.55, -0.2 + i * 0.12);
-      ctx.beginPath();
-      ctx.arc(p.x + Math.sin(i + t * 5) * 4, p.y + t * 6, 2.8, 0, Math.PI * 2);
-      ctx.fillStyle = "#1a6a7a";
-      ctx.fill();
+  function drawCalciumAnimation(g) {
+    const anim = state.caAnim || { playing: false, phase: "idle", t0: 0, done: false };
+    if (!anim.playing && anim.phase === "idle") return;
+
+    const now = performance.now();
+    let elapsed = anim.playing ? (now - anim.t0) / 1000 : 999;
+
+    let phase = anim.phase;
+    if (anim.playing) {
+      if (elapsed < 1.6) phase = "entry";
+      else if (elapsed < 2.4) phase = "ip3";
+      else if (elapsed < 4.2) phase = "release";
+      else {
+        phase = "done";
+        anim.playing = false;
+        anim.done = true;
+        anim.phase = "done";
+        onCaAnimDone();
+      }
+      anim.phase = phase;
+      updateAnimCaption(phase);
     }
+
+    const caves = CAVEOLAE.filter((c) => c[1] < 0);
+
+    if (phase === "entry" || phase === "ip3") {
+      const localT = phase === "entry" ? elapsed / 1.6 : 1;
+      caves.forEach(([t], i) => {
+        const rim = spindlePoint(g, t, -0.98);
+        const inn = spindlePoint(g, t, -0.45);
+        for (let p = 0; p < 3; p++) {
+          const k = Math.min(1, Math.max(0, localT * 1.2 - p * 0.18 - i * 0.05));
+          const x = rim.x + (inn.x - rim.x) * k;
+          const y = rim.y + (inn.y - rim.y) * k;
+          ctx.beginPath();
+          ctx.arc(x, y, 3.4, 0, Math.PI * 2);
+          ctx.fillStyle = "#3498db";
+          ctx.fill();
+        }
+        if (i === 2) {
+          ctx.fillStyle = "#0d6e6e";
+          ctx.font = "700 11px 'Source Sans 3', sans-serif";
+          ctx.textAlign = "right";
+          ctx.fillText("Ca²⁺ entra", rim.x - 10, rim.y - 8);
+        }
+      });
+    }
+
+    if (phase === "ip3" || phase === "release") {
+      caves.slice(0, 4).forEach(([t], i) => {
+        const rel = spindlePoint(g, t, -0.42);
+        const pulse = 0.5 + 0.5 * Math.sin(state.anim * 0.2 + i);
+        ctx.beginPath();
+        ctx.arc(rel.x + 8, rel.y - 14, 10 + pulse * 2, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(196, 92, 58, ${0.2 + pulse * 0.25})`;
+        ctx.fill();
+        if (i === 1) {
+          ctx.fillStyle = "#c45c3a";
+          ctx.font = "700 11px 'Source Sans 3', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("IP₃", rel.x + 8, rel.y - 11);
+        }
+      });
+    }
+
+    if (phase === "release" || phase === "done") {
+      const localT = phase === "done" ? 1 : Math.max(0, (elapsed - 2.4) / 1.8);
+      caves.forEach(([t], i) => {
+        const rel = spindlePoint(g, t, -0.42);
+        const cyt = spindlePoint(g, t * 0.5, 0.05);
+        for (let p = 0; p < 4; p++) {
+          const k = Math.min(1, Math.max(0, localT * 1.15 - p * 0.12 - i * 0.04));
+          const x = rel.x + (cyt.x - rel.x) * k + Math.sin(p + state.anim * 0.1) * 3;
+          const y = rel.y + (cyt.y - rel.y) * k;
+          ctx.beginPath();
+          ctx.arc(x, y, 3.2, 0, Math.PI * 2);
+          ctx.fillStyle = "#1a6a7a";
+          ctx.fill();
+        }
+        if (i === 2) {
+          ctx.fillStyle = "#1a6a7a";
+          ctx.font = "700 11px 'Source Sans 3', sans-serif";
+          ctx.textAlign = "left";
+          ctx.fillText("Ca²⁺ sai do REL", rel.x + 18, rel.y + 16);
+        }
+      });
+    }
+  }
+
+  function updateAnimCaption(phase) {
+    const el = $("anim-caption");
+    if (!el) return;
+    const map = {
+      idle: "REL junto das cavéolas armazena Ca²⁺. Toque para animar.",
+      entry: "① Ca²⁺ entra pela membrana nas cavéolas…",
+      ip3: "② IP₃ estimula o REL próximo…",
+      release: "③ REL libera Ca²⁺ para o citosol…",
+      done: "Animação concluída. Pode avançar ou repetir.",
+    };
+    el.textContent = map[phase] || map.idle;
+  }
+
+  function onCaAnimDone() {
+    const s = step();
+    if (!s || s.id !== "calcio") return;
+    state.showCaOut = true;
+    state.showCaRel = true;
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = "Repetir animação";
+    }
+    setFeedback(true, s.feedback);
+    $("btn-next").classList.remove("hidden");
+    $("btn-next").textContent = "Próxima etapa";
+  }
+
+  function startCaAnim() {
+    state.caAnim = {
+      playing: true,
+      phase: "entry",
+      t0: performance.now(),
+      done: !!(state.caAnim && state.caAnim.done),
+    };
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Animando…";
+    }
+    $("btn-next").classList.add("hidden");
+    clearFeedback();
+    updateAnimCaption("entry");
   }
 
   function drawCaM(g) {
@@ -973,10 +1126,10 @@
     $("text-form").classList.toggle("hidden", s.type !== "text");
     $("quiz").classList.add("hidden");
     $("tray-wrap").classList.add("hidden");
+    $("anim-wrap").classList.add("hidden");
     $("btn-next").classList.add("hidden");
     clearFeedback();
     hideArrow();
-    if (s.onLeave) { /* noop on render */ }
     if (s.onEnter) s.onEnter();
 
     $("answer").value = "";
@@ -990,6 +1143,19 @@
       $("tray").innerHTML = "";
       $("pools").innerHTML = "";
       renderQuiz(s);
+    } else if (s.type === "anim") {
+      $("slots").innerHTML = "";
+      $("tray").innerHTML = "";
+      $("pools").innerHTML = "";
+      $("anim-wrap").classList.remove("hidden");
+      const btn = $("btn-anim");
+      btn.disabled = false;
+      btn.textContent = state.caAnim.done ? "Repetir animação" : "Animar entrada de Ca²⁺";
+      updateAnimCaption(state.caAnim.done ? "done" : "idle");
+      if (state.caAnim.done) {
+        setFeedback(true, s.feedback);
+        $("btn-next").classList.remove("hidden");
+      }
     } else if (s.type === "place" || s.type === "place+quiz") {
       $("tray-wrap").classList.remove("hidden");
       renderTray(s);
@@ -1154,6 +1320,8 @@
       showCaOut: false,
       showCaRel: false,
       showCaM: false,
+      showRelNearCaveolae: false,
+      caAnim: { playing: false, phase: "idle", t0: 0, done: false },
       showMlck: false,
     });
   }
@@ -1252,6 +1420,7 @@
   });
 
   $("btn-next").onclick = goNext;
+  $("btn-anim").onclick = startCaAnim;
   $("btn-restart").onclick = () => {
     state.index = 0;
     resetVisuals();
