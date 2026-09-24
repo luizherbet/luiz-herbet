@@ -3,63 +3,168 @@
 
   const $ = (id) => document.getElementById(id);
 
+  const ICONS = {
+    "nucleus-central": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <ellipse cx="32" cy="32" rx="18" ry="14" fill="#6b3f7a"/>
+        <ellipse cx="28" cy="30" rx="4" ry="3" fill="#9b6aad"/>
+      </svg>`,
+    "dense-bodies": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="22" cy="24" r="5" fill="#8a5a2b"/>
+        <circle cx="40" cy="22" r="5" fill="#8a5a2b"/>
+        <circle cx="30" cy="38" r="5" fill="#8a5a2b"/>
+        <circle cx="46" cy="40" r="4" fill="#8a5a2b"/>
+        <circle cx="18" cy="42" r="4" fill="#8a5a2b"/>
+      </svg>`,
+    "dense-plaques": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <ellipse cx="32" cy="32" rx="24" ry="18" fill="none" stroke="#9a5f74" stroke-width="3"/>
+        <circle cx="12" cy="28" r="4" fill="#8a5a2b"/>
+        <circle cx="20" cy="16" r="4" fill="#8a5a2b"/>
+        <circle cx="44" cy="16" r="4" fill="#8a5a2b"/>
+        <circle cx="52" cy="30" r="4" fill="#8a5a2b"/>
+        <circle cx="46" cy="46" r="4" fill="#8a5a2b"/>
+        <circle cx="18" cy="46" r="4" fill="#8a5a2b"/>
+      </svg>`,
+    caveolae: `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M8 20 Q20 20 20 32 Q20 44 8 44" fill="none" stroke="#1a6a7a" stroke-width="3"/>
+        <path d="M8 24 Q16 24 16 32 Q16 40 8 40" fill="#7ec8d4" opacity="0.7"/>
+        <path d="M28 18 Q40 18 40 32 Q40 46 28 46" fill="none" stroke="#1a6a7a" stroke-width="3"/>
+        <path d="M28 22 Q36 22 36 32 Q36 42 28 42" fill="#7ec8d4" opacity="0.7"/>
+        <path d="M48 20 Q58 20 58 32 Q58 44 48 44" fill="none" stroke="#1a6a7a" stroke-width="3"/>
+      </svg>`,
+    rel: `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M12 20 C24 12, 28 28, 40 20 C48 14, 52 28, 52 36 C52 46, 40 50, 32 44 C24 38, 20 50, 12 42 Z"
+          fill="none" stroke="#2f7d9a" stroke-width="3"/>
+        <circle cx="22" cy="28" r="3" fill="#5eb0d0"/>
+        <circle cx="38" cy="34" r="3" fill="#5eb0d0"/>
+        <circle cx="30" cy="42" r="3" fill="#5eb0d0"/>
+      </svg>`,
+    "myosin-folded": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M18 40 C18 22, 34 22, 34 34 C34 46, 18 46, 18 34" fill="none" stroke="#2b6cb0" stroke-width="4"/>
+        <path d="M30 40 C30 22, 46 22, 46 34 C46 46, 30 46, 30 34" fill="none" stroke="#2b6cb0" stroke-width="4"/>
+        <circle cx="18" cy="34" r="4" fill="#1e4e8c"/>
+        <circle cx="46" cy="34" r="4" fill="#1e4e8c"/>
+      </svg>`,
+    triad: `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="12" y="14" width="12" height="36" rx="4" fill="#c45c3a"/>
+        <rect x="26" y="10" width="12" height="44" rx="3" fill="#3d7ea6"/>
+        <rect x="40" y="14" width="12" height="36" rx="4" fill="#c45c3a"/>
+      </svg>`,
+    troponin: `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <line x1="10" y1="32" x2="54" y2="32" stroke="#c0392b" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="20" cy="32" r="5" fill="#e2b84a"/>
+        <circle cx="32" cy="32" r="5" fill="#e2b84a"/>
+        <circle cx="44" cy="32" r="5" fill="#e2b84a"/>
+      </svg>`,
+    "nuclei-peripheral": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <rect x="8" y="18" width="48" height="28" rx="14" fill="#c5d8e6" stroke="#6d8ea3" stroke-width="2"/>
+        <ellipse cx="16" cy="24" rx="5" ry="7" fill="#6b3f7a"/>
+        <ellipse cx="16" cy="40" rx="5" ry="7" fill="#6b3f7a"/>
+        <ellipse cx="48" cy="24" rx="5" ry="7" fill="#6b3f7a"/>
+        <ellipse cx="48" cy="40" rx="5" ry="7" fill="#6b3f7a"/>
+      </svg>`,
+    sarcomere: `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <line x1="10" y1="16" x2="10" y2="48" stroke="#333" stroke-width="3"/>
+        <line x1="54" y1="16" x2="54" y2="48" stroke="#333" stroke-width="3"/>
+        <rect x="22" y="20" width="20" height="24" fill="#8aa5b8"/>
+        <rect x="12" y="28" width="10" height="8" fill="#d9e6ef"/>
+        <rect x="42" y="28" width="10" height="8" fill="#d9e6ef"/>
+        <line x1="32" y1="22" x2="32" y2="42" stroke="#1c2a33" stroke-width="2"/>
+      </svg>`,
+    "motor-endplate": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M12 18 C20 10, 28 22, 36 14 C42 10, 48 20, 52 16" fill="none" stroke="#6b3f7a" stroke-width="3"/>
+        <ellipse cx="32" cy="40" rx="20" ry="10" fill="#9b6aad"/>
+        <circle cx="24" cy="40" r="2.5" fill="#f4e8ff"/>
+        <circle cx="32" cy="38" r="2.5" fill="#f4e8ff"/>
+        <circle cx="40" cy="40" r="2.5" fill="#f4e8ff"/>
+      </svg>`,
+    "myosin-bipolar": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <line x1="12" y1="32" x2="52" y2="32" stroke="#2b6cb0" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="14" cy="24" r="4" fill="#1e4e8c"/>
+        <circle cx="14" cy="40" r="4" fill="#1e4e8c"/>
+        <circle cx="50" cy="24" r="4" fill="#1e4e8c"/>
+        <circle cx="50" cy="40" r="4" fill="#1e4e8c"/>
+        <rect x="28" y="28" width="8" height="8" fill="#d9e4ec"/>
+      </svg>`,
+    "cam-mlck": `
+      <svg class="ico" viewBox="0 0 64 64" aria-hidden="true">
+        <circle cx="22" cy="32" r="12" fill="#2f9e6b"/>
+        <circle cx="22" cy="32" r="5" fill="#d8ffe8"/>
+        <path d="M34 32 H44" stroke="#0d6e6e" stroke-width="3"/>
+        <rect x="44" y="22" width="14" height="20" rx="4" fill="#0d6e6e"/>
+      </svg>`,
+  };
+
   const MODES = {
     smooth: {
       eyebrow: "Músculo liso",
       title: "Monte a célula fusiforme",
-      win:
-        "Formato em fuso, núcleo central, corpos/placas densas, cavéolas + REL e via Ca²⁺–CaM–MLCK. Sem sarcômero nem tríade.",
+      win: "Fuso com núcleo central, corpos/placas densas, cavéolas + REL e miosina 10S. Sem tríade nem troponina.",
       silhouette: "smooth",
       slots: [
-        { id: "nucleus", label: "Núcleo", x: 50, y: 48, accept: "nucleus-central" },
-        { id: "dense", label: "Âncoras", x: 32, y: 34, accept: "dense-bodies" },
-        { id: "plaque", label: "Membrana", x: 78, y: 30, accept: "dense-plaques" },
-        { id: "caveolae", label: "Superfície", x: 18, y: 58, accept: "caveolae" },
-        { id: "rel", label: "Ca²⁺ interno", x: 68, y: 62, accept: "rel" },
-        { id: "myosin", label: "Filamento", x: 48, y: 72, accept: "myosin-folded" },
+        { id: "nucleus", x: 50, y: 48, accept: "nucleus-central" },
+        { id: "dense", x: 34, y: 32, accept: "dense-bodies" },
+        { id: "plaque", x: 78, y: 28, accept: "dense-plaques" },
+        { id: "caveolae", x: 16, y: 56, accept: "caveolae" },
+        { id: "rel", x: 70, y: 64, accept: "rel" },
+        { id: "myosin", x: 48, y: 74, accept: "myosin-folded" },
       ],
       pieces: [
-        { id: "nucleus-central", name: "Núcleo central", blurb: "Único, no meio do fuso", correct: true },
-        { id: "dense-bodies", name: "Corpos densos", blurb: "Âncoras de actina no citoplasma", correct: true },
-        { id: "dense-plaques", name: "Placas densas", blurb: "Âncoras no sarcolema", correct: true },
-        { id: "caveolae", name: "Cavéolas", blurb: "Entrada de Ca²⁺ na membrana", correct: true },
-        { id: "rel", name: "REL próximo", blurb: "Libera mais Ca²⁺ (IP₃)", correct: true },
-        { id: "myosin-folded", name: "Miosina 10S", blurb: "Dobrada / depois lateral-polar", correct: true },
-        { id: "triad", name: "Tríade T–RS", blurb: "Armadilha do esquelético", correct: false },
-        { id: "troponin", name: "Troponina C", blurb: "Armadilha do esquelético", correct: false },
+        { id: "nucleus-central", name: "Núcleo central", correct: true },
+        { id: "dense-bodies", name: "Corpos densos", correct: true },
+        { id: "dense-plaques", name: "Placas densas", correct: true },
+        { id: "caveolae", name: "Cavéolas", correct: true },
+        { id: "rel", name: "REL", correct: true },
+        { id: "myosin-folded", name: "Miosina 10S", correct: true },
+        { id: "triad", name: "Tríade T–RS", correct: false },
+        { id: "troponin", name: "Troponina C", correct: false },
+        { id: "sarcomere", name: "Sarcômero", correct: false },
+        { id: "motor-endplate", name: "Placa motora", correct: false },
       ],
     },
     striated: {
       eyebrow: "Estriado esquelético",
       title: "Monte a fibra estriada",
-      win:
-        "Fibra cilíndrica com núcleos periféricos, sarcômero organizado, placa motora, tríade e controle fino por troponina.",
+      win: "Fibra com núcleos periféricos, sarcômero, placa motora, tríade, miosina bipolar e troponina.",
       silhouette: "striated",
       slots: [
-        { id: "nuclei", label: "Núcleos", x: 18, y: 28, accept: "nuclei-peripheral" },
-        { id: "sarcomere", label: "Unidade", x: 50, y: 48, accept: "sarcomere" },
-        { id: "nmj", label: "Estímulo", x: 50, y: 16, accept: "motor-endplate" },
-        { id: "triad", label: "Acoplamento", x: 72, y: 38, accept: "triad" },
-        { id: "myosin", label: "Espesso", x: 50, y: 68, accept: "myosin-bipolar" },
-        { id: "troponin", label: "Controle", x: 28, y: 68, accept: "troponin" },
+        { id: "nuclei", x: 16, y: 30, accept: "nuclei-peripheral" },
+        { id: "sarcomere", x: 50, y: 50, accept: "sarcomere" },
+        { id: "nmj", x: 50, y: 16, accept: "motor-endplate" },
+        { id: "triad", x: 74, y: 36, accept: "triad" },
+        { id: "myosin", x: 50, y: 74, accept: "myosin-bipolar" },
+        { id: "troponin", x: 26, y: 70, accept: "troponin" },
       ],
       pieces: [
-        { id: "nuclei-peripheral", name: "Núcleos periféricos", blurb: "Vários, sob o sarcolema", correct: true },
-        { id: "sarcomere", name: "Sarcômero Z–I–A–H–M", blurb: "Unidade de contração", correct: true },
-        { id: "motor-endplate", name: "Placa motora", blurb: "Junção neuromuscular", correct: true },
-        { id: "triad", name: "Tríade (T + RS)", blurb: "Na junção A–I", correct: true },
-        { id: "myosin-bipolar", name: "Miosina bipolar", blurb: "Zona desnuda no centro", correct: true },
-        { id: "troponin", name: "Troponina C", blurb: "Sensor de Ca²⁺ no fino", correct: true },
-        { id: "caveolae", name: "Cavéolas", blurb: "Armadilha do liso", correct: false },
-        { id: "cam-mlck", name: "CaM → MLCK", blurb: "Armadilha do liso", correct: false },
+        { id: "nuclei-peripheral", name: "Núcleos periféricos", correct: true },
+        { id: "sarcomere", name: "Sarcômero", correct: true },
+        { id: "motor-endplate", name: "Placa motora", correct: true },
+        { id: "triad", name: "Tríade T–RS", correct: true },
+        { id: "myosin-bipolar", name: "Miosina bipolar", correct: true },
+        { id: "troponin", name: "Troponina C", correct: true },
+        { id: "caveolae", name: "Cavéolas", correct: false },
+        { id: "cam-mlck", name: "CaM → MLCK", correct: false },
+        { id: "dense-bodies", name: "Corpos densos", correct: false },
+        { id: "myosin-folded", name: "Miosina 10S", correct: false },
       ],
     },
   };
 
   const state = {
     mode: null,
-    selected: null,
-    placed: {}, // slotId -> pieceId
+    placed: {},
+    order: [],
     drag: null,
   };
 
@@ -76,6 +181,14 @@
     return MODES[state.mode];
   }
 
+  function pieceById(id) {
+    return mod().pieces.find((p) => p.id === id);
+  }
+
+  function iconHtml(id) {
+    return ICONS[id] || `<div class="ico"></div>`;
+  }
+
   function neededCount() {
     return mod().slots.length;
   }
@@ -84,10 +197,17 @@
     return Object.keys(state.placed).length;
   }
 
+  function setTip(msg) {
+    $("tip").textContent = msg;
+  }
+
+  function updateHud() {
+    $("score-badge").textContent = `${placedCount()} / ${neededCount()}`;
+  }
+
   function drawSilhouette() {
     const svg = $("cell-svg");
-    const kind = mod().silhouette;
-    if (kind === "smooth") {
+    if (mod().silhouette === "smooth") {
       svg.innerHTML = `
         <defs>
           <linearGradient id="cellFill" x1="0" y1="0" x2="1" y2="1">
@@ -96,8 +216,6 @@
           </linearGradient>
         </defs>
         <ellipse cx="320" cy="180" rx="250" ry="110" fill="url(#cellFill)" stroke="#9a5f74" stroke-width="3"/>
-        <ellipse cx="320" cy="180" rx="42" ry="28" fill="#6b3f7a" opacity="0.28"/>
-        <text x="320" y="330" text-anchor="middle" fill="#5a6d78" font-size="14" font-family="Source Sans 3, sans-serif">Célula muscular lisa (fusiforme)</text>
       `;
     } else {
       svg.innerHTML = `
@@ -111,53 +229,29 @@
         ${[120, 180, 240, 300, 360, 420, 480]
           .map(
             (x, i) =>
-              `<line x1="${x}" y1="100" x2="${x}" y2="240" stroke="${i % 2 ? "#8aa5b8" : "#a9c0cf"}" stroke-width="${i % 2 ? 10 : 4}" opacity="0.55"/>`
+              `<line x1="${x}" y1="100" x2="${x}" y2="240" stroke="${i % 2 ? "#8aa5b8" : "#a9c0cf"}" stroke-width="${i % 2 ? 10 : 4}" opacity="0.5"/>`
           )
           .join("")}
-        <ellipse cx="100" cy="120" rx="10" ry="14" fill="#6b3f7a"/>
-        <ellipse cx="100" cy="220" rx="10" ry="14" fill="#6b3f7a"/>
-        <ellipse cx="540" cy="120" rx="10" ry="14" fill="#6b3f7a"/>
-        <ellipse cx="540" cy="220" rx="10" ry="14" fill="#6b3f7a"/>
-        <text x="320" y="330" text-anchor="middle" fill="#5a6d78" font-size="14" font-family="Source Sans 3, sans-serif">Fibra muscular esquelética</text>
       `;
     }
-  }
-
-  function pieceById(id) {
-    return mod().pieces.find((p) => p.id === id);
-  }
-
-  function updateHud() {
-    $("score-badge").textContent = `${placedCount()} / ${neededCount()}`;
-    if (state.selected) {
-      const p = pieceById(state.selected);
-      $("hint-badge").textContent = p ? p.name : "Peça";
-    } else {
-      $("hint-badge").textContent = "Toque numa peça";
-    }
-  }
-
-  function setTip(msg) {
-    $("tip").textContent = msg;
   }
 
   function renderSlots() {
     const host = $("slots");
     host.innerHTML = "";
     mod().slots.forEach((slot) => {
-      const el = document.createElement("button");
-      el.type = "button";
+      const el = document.createElement("div");
       el.className = "slot" + (state.placed[slot.id] ? " filled" : "");
       el.style.left = `${slot.x}%`;
       el.style.top = `${slot.y}%`;
       el.dataset.slotId = slot.id;
+
       if (state.placed[slot.id]) {
         const p = pieceById(state.placed[slot.id]);
-        el.innerHTML = `<span class="slot-label">${slot.label}</span><span class="slot-piece">${p.name}</span>`;
+        el.innerHTML = `${iconHtml(p.id).replace('class="ico"', 'class="slot-icon"')}<span class="slot-name">${p.name}</span>`;
       } else {
-        el.innerHTML = `<span class="slot-label">${slot.label}</span><span class="slot-piece">Encaixe aqui</span>`;
+        el.innerHTML = `<span class="empty-mark"></span>`;
       }
-      el.addEventListener("click", () => onSlotTap(slot.id));
       host.appendChild(el);
     });
   }
@@ -165,159 +259,172 @@
   function renderTray() {
     const tray = $("tray");
     tray.innerHTML = "";
-    const order = shuffle(mod().pieces);
-    // keep stable order after first render using dataset on tray
-    const saved = tray.dataset.order ? JSON.parse(tray.dataset.order) : null;
-    const list = saved
-      ? saved.map((id) => pieceById(id)).filter(Boolean)
-      : order;
-    if (!saved) tray.dataset.order = JSON.stringify(list.map((p) => p.id));
-
-    list.forEach((piece) => {
+    state.order.forEach((id) => {
+      const piece = pieceById(id);
+      if (!piece) return;
       const used = Object.values(state.placed).includes(piece.id);
-      const btn = document.createElement("button");
-      btn.type = "button";
-      btn.className =
-        "piece" +
-        (used ? " used" : "") +
-        (state.selected === piece.id ? " selected" : "");
-      btn.dataset.pieceId = piece.id;
-      btn.innerHTML = `<strong>${piece.name}</strong><span>${piece.blurb}</span>`;
-      btn.addEventListener("click", () => onPieceTap(piece.id));
-      enableDrag(btn, piece.id);
-      tray.appendChild(btn);
+      const el = document.createElement("div");
+      el.className = "piece" + (used ? " used" : "");
+      el.dataset.pieceId = piece.id;
+      el.setAttribute("role", "listitem");
+      el.setAttribute("aria-label", "elemento");
+      el.innerHTML = iconHtml(piece.id);
+      if (!used) bindDrag(el, piece.id);
+      tray.appendChild(el);
     });
   }
 
-  function onPieceTap(pieceId) {
-    if (Object.values(state.placed).includes(pieceId)) return;
-    state.selected = state.selected === pieceId ? null : pieceId;
-    document.querySelectorAll(".slot").forEach((s) => s.classList.toggle("target", !!state.selected && !s.classList.contains("filled")));
-    renderTray();
-    updateHud();
-    const p = pieceById(pieceId);
-    setTip(state.selected ? `Agora toque no encaixe certo para “${p.name}”.` : "Selecione uma peça abaixo e toque no encaixe certo.");
+  function clearHot() {
+    document.querySelectorAll(".slot.hot").forEach((s) => s.classList.remove("hot"));
   }
 
-  function onSlotTap(slotId) {
-    if (!state.selected) {
-      setTip("Primeiro escolha uma peça na bandeja.");
-      return;
+  function slotFromPoint(x, y) {
+    const ghost = $("ghost");
+    const prev = ghost.style.pointerEvents;
+    ghost.style.pointerEvents = "none";
+    const stack = document.elementsFromPoint(x, y);
+    ghost.style.pointerEvents = prev || "none";
+    for (const node of stack) {
+      if (node.classList && node.classList.contains("slot") && !node.classList.contains("filled")) {
+        return node;
+      }
     }
-    tryPlace(state.selected, slotId);
+    return null;
   }
 
   function tryPlace(pieceId, slotId) {
     const slot = mod().slots.find((s) => s.id === slotId);
     const piece = pieceById(pieceId);
-    if (!slot || !piece) return;
-    if (state.placed[slotId]) {
-      setTip("Esse encaixe já está preenchido. Limpe ou use outro.");
-      return;
-    }
+    if (!slot || !piece || state.placed[slotId]) return false;
 
     const slotEl = document.querySelector(`[data-slot-id="${slotId}"]`);
 
     if (slot.accept === pieceId) {
       state.placed[slotId] = pieceId;
-      state.selected = null;
-      setTip(`Certo: ${piece.name} encaixa em “${slot.label}”.`);
+      setTip(`${piece.name}`);
       renderSlots();
       renderTray();
       updateHud();
       checkWin();
-      return;
+      return true;
     }
 
-    // wrong
     if (slotEl) {
       slotEl.classList.add("wrong");
-      setTimeout(() => slotEl.classList.remove("wrong"), 380);
+      setTimeout(() => slotEl.classList.remove("wrong"), 360);
     }
-    if (!piece.correct) {
-      setTip(`“${piece.name}” não pertence a este tipo de célula.`);
-    } else {
-      setTip(`“${piece.name}” é deste tipo, mas não neste lugar. Tente outro encaixe.`);
-    }
+    setTip(piece.correct ? "Elemento deste tipo, mas no lugar errado." : "Esse elemento não pertence a esta célula.");
+    return false;
   }
 
   function checkWin() {
     if (placedCount() < neededCount()) return;
     $("win").classList.remove("hidden");
     $("win-body").textContent = mod().win;
-    setTip("Célula completa. Compare mentalmente com o outro tipo.");
+    setTip("Célula completa.");
+  }
+
+  function bindDrag(el, pieceId) {
+    el.addEventListener("pointerdown", (e) => {
+      if (e.button != null && e.button !== 0) return;
+      e.preventDefault();
+      el.setPointerCapture(e.pointerId);
+
+      const ghost = $("ghost");
+      ghost.innerHTML = iconHtml(pieceId);
+      ghost.classList.remove("hidden");
+      ghost.style.left = `${e.clientX}px`;
+      ghost.style.top = `${e.clientY}px`;
+      el.classList.add("dragging");
+
+      state.drag = {
+        pieceId,
+        pointerId: e.pointerId,
+        startX: e.clientX,
+        startY: e.clientY,
+        moved: false,
+      };
+    });
+
+    el.addEventListener("pointermove", (e) => {
+      if (!state.drag || state.drag.pieceId !== pieceId) return;
+      if (state.drag.pointerId !== e.pointerId) return;
+
+      const dx = e.clientX - state.drag.startX;
+      const dy = e.clientY - state.drag.startY;
+      if (Math.hypot(dx, dy) > 4) state.drag.moved = true;
+
+      const ghost = $("ghost");
+      ghost.style.left = `${e.clientX}px`;
+      ghost.style.top = `${e.clientY}px`;
+
+      clearHot();
+      const over = slotFromPoint(e.clientX, e.clientY);
+      if (over) over.classList.add("hot");
+    });
+
+    const end = (e) => {
+      if (!state.drag || state.drag.pieceId !== pieceId) return;
+      if (state.drag.pointerId !== e.pointerId) return;
+
+      const { moved } = state.drag;
+      const x = e.clientX;
+      const y = e.clientY;
+      state.drag = null;
+
+      clearHot();
+      $("ghost").classList.add("hidden");
+      el.classList.remove("dragging");
+
+      if (!moved) {
+        setTip("Arraste o elemento até um encaixe da célula.");
+        return;
+      }
+
+      const over = slotFromPoint(x, y);
+      if (over && over.dataset.slotId) {
+        tryPlace(pieceId, over.dataset.slotId);
+      } else {
+        setTip("Solte sobre um encaixe vazio.");
+      }
+    };
+
+    el.addEventListener("pointerup", end);
+    el.addEventListener("pointercancel", end);
   }
 
   function resetBoard(keepMode) {
-    state.selected = null;
     state.placed = {};
-    $("tray").dataset.order = "";
+    state.drag = null;
+    $("ghost").classList.add("hidden");
     $("win").classList.add("hidden");
+    clearHot();
     if (keepMode && state.mode) {
+      state.order = shuffle(mod().pieces.map((p) => p.id));
       drawSilhouette();
       renderSlots();
       renderTray();
       updateHud();
-      setTip("Selecione uma peça abaixo e toque no encaixe certo.");
+      setTip("Arraste cada elemento até o encaixe certo.");
     }
   }
 
   function startMode(mode) {
     state.mode = mode;
-    state.selected = null;
     state.placed = {};
-    $("tray").dataset.order = "";
+    state.drag = null;
+    state.order = shuffle(mod().pieces.map((p) => p.id));
     $("chooser").classList.add("hidden");
     $("board").classList.remove("hidden");
     $("win").classList.add("hidden");
+    $("ghost").classList.add("hidden");
     $("sim-eyebrow").textContent = mod().eyebrow;
     $("sim-title").textContent = mod().title;
     drawSilhouette();
     renderSlots();
     renderTray();
     updateHud();
-    setTip("Selecione uma peça abaixo e toque no encaixe certo. Há peças-armadilha.");
-  }
-
-  function enableDrag(el, pieceId) {
-    el.addEventListener("pointerdown", (e) => {
-      if (Object.values(state.placed).includes(pieceId)) return;
-      if (e.pointerType === "touch") return; // mobile usa tap-tap
-      el.setPointerCapture(e.pointerId);
-      state.drag = { pieceId, startX: e.clientX, startY: e.clientY, moved: false };
-      state.selected = pieceId;
-      renderTray();
-      updateHud();
-    });
-    el.addEventListener("pointermove", (e) => {
-      if (!state.drag || state.drag.pieceId !== pieceId) return;
-      const dx = e.clientX - state.drag.startX;
-      const dy = e.clientY - state.drag.startY;
-      if (Math.hypot(dx, dy) > 6) state.drag.moved = true;
-      if (state.drag.moved) {
-        el.style.transform = `translate(${dx}px, ${dy}px)`;
-        el.style.zIndex = "20";
-        el.style.opacity = "0.9";
-      }
-    });
-    el.addEventListener("pointerup", (e) => {
-      if (!state.drag || state.drag.pieceId !== pieceId) return;
-      el.style.transform = "";
-      el.style.zIndex = "";
-      el.style.opacity = "";
-      const moved = state.drag.moved;
-      state.drag = null;
-      if (!moved) return; // click handled separately
-      const target = document.elementFromPoint(e.clientX, e.clientY);
-      const slotEl = target && target.closest ? target.closest(".slot") : null;
-      if (slotEl && slotEl.dataset.slotId) {
-        tryPlace(pieceId, slotEl.dataset.slotId);
-      } else {
-        setTip("Solte a peça sobre um encaixe da célula.");
-        renderTray();
-        updateHud();
-      }
-    });
+    setTip("Arraste cada elemento até o encaixe certo. O nome só aparece quando estiver certo.");
   }
 
   $("pick-smooth").onclick = () => startMode("smooth");

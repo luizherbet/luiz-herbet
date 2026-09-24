@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#d9e4ec" />
   <base href="/game/" />
   <title>Monte a Célula — Histologia</title>
-  <link rel="stylesheet" href="/game/style.css?v=build1" />
+  <link rel="stylesheet" href="/game/style.css?v=build2" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,600;7..72,700&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet" />
@@ -16,15 +16,15 @@
     <div class="chooser-inner">
       <p class="eyebrow">Ross &amp; Pawlina · Histologia (2016)</p>
       <h1>Monte a célula muscular</h1>
-      <p class="lede">Escolha o tipo e encaixe os elementos nos lugares certos. Tem peça-armadilha do outro tipo.</p>
+      <p class="lede">Arraste os elementos para os encaixes. O nome só aparece quando estiver certo.</p>
       <div class="choice-grid">
         <button type="button" id="pick-smooth" class="choice-card">
           <strong>Músculo liso</strong>
-          <span>Fusiforme · núcleos centrais · cavéolas · CaM–MLCK</span>
+          <span>Célula fusiforme</span>
         </button>
         <button type="button" id="pick-striated" class="choice-card">
           <strong>Estriado esquelético</strong>
-          <span>Cilindro · sarcômero · tríade · troponina</span>
+          <span>Fibra com sarcômeros</span>
         </button>
       </div>
     </div>
@@ -39,7 +39,6 @@
       </div>
       <div class="sim-bar-meta">
         <span id="score-badge">0 / 0</span>
-        <span id="hint-badge">Toque numa peça</span>
       </div>
     </header>
 
@@ -49,15 +48,15 @@
           <svg id="cell-svg" viewBox="0 0 640 360" preserveAspectRatio="xMidYMid meet"></svg>
           <div id="slots" class="slots"></div>
         </div>
-        <p id="tip" class="tip">Selecione uma peça abaixo e toque no encaixe certo.</p>
+        <p id="tip" class="tip">Arraste cada elemento até o encaixe certo.</p>
       </section>
 
       <aside class="tray-panel">
         <div class="tray-head">
-          <h2>Peças</h2>
+          <h2>Elementos</h2>
           <button type="button" id="btn-reset" class="btn ghost compact">Limpar</button>
         </div>
-        <p class="tray-help">Arraste (desktop) ou toque na peça e depois no encaixe (celular).</p>
+        <p class="tray-help">Arraste para a célula. Nomes aparecem só no encaixe correto.</p>
         <div id="tray" class="tray" role="list"></div>
         <div id="win" class="win hidden">
           <strong>Célula montada!</strong>
@@ -68,6 +67,7 @@
     </div>
   </div>
 
-  <script src="/game/game.js?v=build1"></script>
+  <div id="ghost" class="ghost hidden" aria-hidden="true"></div>
+  <script src="/game/game.js?v=build2"></script>
 </body>
 </html>
