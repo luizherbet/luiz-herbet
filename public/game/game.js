@@ -36,6 +36,7 @@
     shorten: 0,
     shortenTarget: 0,
     myosinActive: false,
+    latchAnim: { playing: false, phase: "idle", t0: 0, done: false },
     showMlck: false,
   };
 
@@ -322,13 +323,13 @@
       animId: "contracao",
       animLabel: "Animar cascata e contração",
       animRepeat: "Repetir cascata",
-      final: true,
       onEnter: () => {
         state.viewMode = "cascade";
         state.focus = null;
         state.showRelNearCaveolae = false;
         state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: false, step: 0 };
         state.shorten = 0;
+        state.shortenTarget = 0;
         state.showCaM = false;
         state.showMlck = false;
         state.myosinActive = false;
@@ -338,6 +339,29 @@
         state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: state.cascadeAnim.done, step: 0 };
       },
       feedback: "Cascata completa: Ca²⁺–CaM → MLCK → miosina ativa → actina ↔ miosina → contração.",
+    },
+    {
+      id: "latch",
+      phase: "Latch state",
+      title: "O truque do músculo liso: latch",
+      body: "A miosina pode ser desfosforilada ainda ligada à actina — e continuar presa. Pouco ATP, muita força mantida.",
+      type: "anim",
+      animId: "latch",
+      animLabel: "Animar latch state",
+      animRepeat: "Repetir latch",
+      final: true,
+      onEnter: () => {
+        state.viewMode = "latch";
+        state.focus = null;
+        state.latchAnim = { playing: false, phase: "idle", t0: 0, done: false };
+        state.shorten = 0.55;
+        state.shortenTarget = 0.55;
+      },
+      onLeave: () => {
+        state.viewMode = "cell";
+        state.latchAnim = { playing: false, phase: "idle", t0: 0, done: state.latchAnim.done };
+      },
+      feedback: "Latch state: ponte cruzada travada → força alta com baixo gasto de ATP.",
     },
   ];
 
@@ -405,6 +429,14 @@
     if (state.viewMode === "cascade") {
       updateCascadeAnim();
       drawCascade();
+      state.anim++;
+      requestAnimationFrame(draw);
+      return;
+    }
+
+    if (state.viewMode === "latch") {
+      updateLatchAnim();
+      drawLatch();
       state.anim++;
       requestAnimationFrame(draw);
       return;
@@ -1216,8 +1248,201 @@
     }
     setFeedback(true, s.feedback);
     $("btn-next").classList.remove("hidden");
+    $("btn-next").textContent = "Próxima etapa";
+    updateAnimCaption("custom", "Contração concluída. Avance para o latch state.");
+  }
+
+  function startLatchAnim() {
+    state.viewMode = "latch";
+    state.latchAnim = {
+      playing: true,
+      phase: "bound",
+      t0: performance.now(),
+      done: !!(state.latchAnim && state.latchAnim.done),
+    };
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Animando…";
+    }
+    $("btn-next").classList.add("hidden");
+    clearFeedback();
+    updateAnimCaption("custom", "Miosina ligada à actina…");
+  }
+
+  function updateLatchAnim() {
+    const anim = state.latchAnim;
+    if (!anim || !anim.playing) return;
+    const t = (performance.now() - anim.t0) / 1000;
+    if (t < 1.4) {
+      anim.phase = "bound";
+      updateAnimCaption("custom", "ACTINA ═══ MIOSINA — ponte cruzada ligada.");
+    } else if (t < 2.6) {
+      anim.phase = "dephos";
+      updateAnimCaption("custom", "Desfosforilação… você esperaria soltar imediatamente.");
+    } else if (t < 4.0) {
+      anim.phase = "lock";
+      updateAnimCaption("custom", "Mas não: ESTADO TRAVADO — LATCH. ATPase ↓, ciclo lento.");
+    } else if (t < 5.8) {
+      anim.phase = "bars";
+      updateAnimCaption("custom", "Muita força mantida com pouco gasto de ATP.");
+    } else {
+      anim.playing = false;
+      anim.done = true;
+      anim.phase = "done";
+      onLatchAnimDone();
+    }
+  }
+
+  function onLatchAnimDone() {
+    const s = step();
+    if (!s || s.id !== "latch") return;
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = s.animRepeat || "Repetir latch";
+    }
+    setFeedback(true, s.feedback);
+    $("btn-next").classList.remove("hidden");
     $("btn-next").textContent = "Concluir";
-    updateAnimCaption("custom", "Contração concluída. Pode repetir ou concluir.");
+    updateAnimCaption("custom", "Latch state: o chefão final do músculo liso.");
+  }
+
+  function drawLatch() {
+    const cx = state.W * 0.5;
+    const anim = state.latchAnim || { phase: "idle" };
+    const phase = anim.phase || "idle";
+
+    ctx.fillStyle = "#f4f8fa";
+    ctx.fillRect(0, 0, state.W, state.H);
+
+    ctx.fillStyle = "#1c2a33";
+    ctx.font = "700 16px Literata, Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Latch state — o truque do músculo liso", cx, 36);
+
+    const ay = state.H * 0.34;
+    const x0 = state.W * 0.12;
+    const x1 = state.W * 0.88;
+    ctx.strokeStyle = "#3b82c4";
+    ctx.lineWidth = 10;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x0, ay);
+    ctx.lineTo(x1, ay);
+    ctx.stroke();
+    for (let x = x0 + 12; x < x1; x += 16) {
+      ctx.beginPath();
+      ctx.arc(x, ay, 6, 0, Math.PI * 2);
+      ctx.fillStyle = "#5a9fd4";
+      ctx.fill();
+    }
+    ctx.fillStyle = "#3b82c4";
+    ctx.font = "700 12px 'Source Sans 3', sans-serif";
+    ctx.fillText("ACTINA", cx, ay - 22);
+
+    const mx = cx;
+    const my = ay + 48;
+    const locked = phase === "lock" || phase === "bars" || phase === "done";
+    const dephos = phase === "dephos" || locked;
+
+    ctx.strokeStyle = "#b85a72";
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(mx, my + 28);
+    ctx.lineTo(mx, ay + 10);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.arc(mx, ay + 10, 14, 0, Math.PI * 2);
+    ctx.fillStyle = locked ? "#1e4e8c" : "#2b6cb0";
+    ctx.fill();
+
+    ctx.font = "700 22px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "center";
+    if (phase === "bound" || phase === "idle") {
+      ctx.fillStyle = "#c45c3a";
+      ctx.fillText("▼", mx, ay + 8);
+      ctx.font = "600 13px 'Source Sans 3', sans-serif";
+      ctx.fillStyle = "#5a6d78";
+      ctx.fillText("MIOSINA ligada", mx, my + 48);
+    } else if (phase === "dephos") {
+      ctx.fillStyle = "#c45c3a";
+      ctx.fillText("▼", mx, ay + 8);
+      ctx.font = "700 12px 'Source Sans 3', sans-serif";
+      ctx.fillStyle = "#c45c3a";
+      ctx.fillText("–P  desfosforilada…", mx + 90, ay + 14);
+      ctx.fillStyle = "#5a6d78";
+      ctx.font = "600 13px 'Source Sans 3', sans-serif";
+      ctx.fillText("ainda ligada — vai soltar?", mx, my + 48);
+    } else {
+      ctx.fillStyle = "#0d6e6e";
+      ctx.fillText("🔒", mx, ay + 10);
+      const pulse = 0.5 + 0.5 * Math.sin(state.anim * 0.15);
+      ctx.strokeStyle = `rgba(13,110,110,${0.35 + pulse * 0.4})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(mx, ay + 10, 22 + pulse * 3, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.font = "700 14px 'Source Sans 3', sans-serif";
+      ctx.fillStyle = "#0d6e6e";
+      ctx.fillText("ESTADO TRAVADO — LATCH", mx, my + 48);
+      ctx.font = "600 12px 'Source Sans 3', sans-serif";
+      ctx.fillStyle = "#5a6d78";
+      ctx.fillText("ATPase ↓  ·  ciclo lento", mx, my + 68);
+    }
+
+    if (phase === "dephos") {
+      ctx.globalAlpha = 0.75;
+      ctx.fillStyle = "#e2b84a";
+      ctx.beginPath();
+      ctx.arc(mx + 28, ay + 2, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#1c2a33";
+      ctx.font = "700 10px 'Source Sans 3', sans-serif";
+      ctx.fillText("P", mx + 28, ay + 5);
+      ctx.globalAlpha = 1;
+    }
+
+    if (phase === "bars" || phase === "done") {
+      const barY = state.H * 0.72;
+      const barW = Math.min(320, state.W * 0.7);
+      const barX = cx - barW / 2;
+      const forceT = phase === "done" ? 1 : Math.min(1, ((performance.now() - anim.t0) / 1000 - 4) / 1.2);
+
+      ctx.fillStyle = "#1c2a33";
+      ctx.font = "700 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText("FORÇA", barX, barY - 8);
+      ctx.fillStyle = "#d5e0e8";
+      roundRect(barX, barY, barW, 18, 6);
+      ctx.fill();
+      ctx.fillStyle = "#c45c3a";
+      roundRect(barX, barY, Math.max(4, barW * 0.92 * forceT), 18, 6);
+      ctx.fill();
+
+      ctx.fillStyle = "#1c2a33";
+      ctx.fillText("ATP", barX, barY + 40);
+      ctx.fillStyle = "#d5e0e8";
+      roundRect(barX, barY + 48, barW, 18, 6);
+      ctx.fill();
+      ctx.fillStyle = "#0d6e6e";
+      roundRect(barX, barY + 48, Math.max(4, barW * 0.16), 18, 6);
+      ctx.fill();
+
+      ctx.textAlign = "center";
+      ctx.fillStyle = "#5a6d78";
+      ctx.font = "600 12px 'Source Sans 3', sans-serif";
+      ctx.fillText("muita força mantida · pouco gasto de ATP", cx, barY + 90);
+    } else if (phase === "idle") {
+      ctx.fillStyle = "#5a6d78";
+      ctx.font = "600 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Toque no botão para ver o latch state", cx, state.H * 0.78);
+    }
+
+    // silence unused
+    void dephos;
   }
 
   function drawCascade() {
@@ -1379,11 +1604,18 @@
       $("pools").innerHTML = "";
       $("anim-wrap").classList.remove("hidden");
       const btn = $("btn-anim");
-      const done = s.animId === "ca" ? state.caAnim.done : state.cascadeAnim.done;
+      const done =
+        s.animId === "ca" ? state.caAnim.done :
+        s.animId === "latch" ? state.latchAnim.done :
+        state.cascadeAnim.done;
       btn.disabled = false;
       btn.textContent = done ? (s.animRepeat || "Repetir") : (s.animLabel || "Animar");
       if (s.animId === "ca") updateAnimCaption(done ? "done" : "idle");
-      else updateAnimCaption(done ? "custom" : "cascade", done ? "Contração concluída. Pode repetir ou concluir." : "");
+      else if (s.animId === "latch") {
+        updateAnimCaption(done ? "custom" : "custom", done ? "Latch state: o chefão final do músculo liso." : "Toque para ver o estado travado.");
+      } else {
+        updateAnimCaption(done ? "custom" : "cascade", done ? "Contração concluída. Avance para o latch state." : "");
+      }
       if (done) {
         setFeedback(true, s.feedback);
         $("btn-next").classList.remove("hidden");
@@ -1556,6 +1788,7 @@
       showRelNearCaveolae: false,
       caAnim: { playing: false, phase: "idle", t0: 0, done: false },
       cascadeAnim: { playing: false, phase: "idle", t0: 0, done: false, step: 0 },
+      latchAnim: { playing: false, phase: "idle", t0: 0, done: false },
       shorten: 0,
       shortenTarget: 0,
       myosinActive: false,
@@ -1660,6 +1893,7 @@
   $("btn-anim").onclick = () => {
     const s = step();
     if (s.animId === "contracao") startContractionAnim();
+    else if (s.animId === "latch") startLatchAnim();
     else startCaAnim();
   };
   $("btn-restart").onclick = () => {
