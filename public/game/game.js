@@ -253,10 +253,8 @@
   function resize() {
     const vp = canvas.parentElement.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const minW = window.innerWidth < 860 ? 280 : 480;
-    const minH = window.innerWidth < 860 ? 180 : 320;
-    state.W = Math.max(minW, Math.floor(vp.width));
-    state.H = Math.max(minH, Math.floor(vp.height));
+    state.W = Math.max(480, Math.floor(vp.width));
+    state.H = Math.max(320, Math.floor(vp.height));
     canvas.width = Math.floor(state.W * dpr);
     canvas.height = Math.floor(state.H * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -954,16 +952,9 @@
     }
     if (e.key === "Escape") $("btn-home").click();
   });
-  const onViewportChange = () => {
+  window.addEventListener("resize", () => {
     if (state.mode) resize();
-  };
-  window.addEventListener("resize", onViewportChange);
-  window.addEventListener("orientationchange", () => {
-    setTimeout(onViewportChange, 120);
   });
-  if (window.visualViewport) {
-    window.visualViewport.addEventListener("resize", onViewportChange);
-  }
 
   function loop() {
     state.anim++;
