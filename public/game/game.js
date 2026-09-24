@@ -18,12 +18,15 @@
     showDense: false,
     showActinin: false,
     showDesmin: false,
-    showCaveolae: true, // sempre visíveis; destaque no focus
+    showCaveolae: true,
     showActin: false,
     showMyosin: false,
     showTropomyosin: false,
     showCaldesmon: false,
     showCalponin: false,
+    viewMode: "cell", // 'cell' | 'filament'
+    thinParts: { actin: false, tropo: false, cald: false, calp: false },
+    focusHighlight: null, // 'cald' | 'calp' | 'tropo' | null
     showCaOut: false,
     showCaRel: false,
     showCaM: false,
@@ -163,15 +166,97 @@
       feedback: "Correto — cavéolas (caveolos).",
     },
     {
-      id: "actina",
+      id: "filamento-liga",
       phase: "Filamentos",
-      title: "Ligue os corpos densos com actina",
-      body: "Arraste a actina. Ela conecta corpos densos e placas densas.",
-      type: "place",
-      piece: "actina",
-      slot: { id: "actina", x: 50, y: 58 },
-      unlock: () => { state.showActin = true; },
-      feedback: "Actina no lugar — malha ligando os densos.",
+      title: "Qual filamento se liga aos corpos densos?",
+      body: "Escolha o filamento que ancora nos corpos densos e nas placas densas.",
+      type: "quiz",
+      onEnter: () => {
+        state.viewMode = "cell";
+        state.focus = "dense";
+      },
+      quiz: [
+        {
+          q: "Qual filamento se liga aos corpos densos?",
+          options: ["Actina", "Miosina"],
+          answer: 0,
+        },
+      ],
+      unlock: () => {
+        state.showActin = true;
+        state.focus = null;
+      },
+      feedback: "Correto — a actina (filamento fino) ancora nos corpos densos.",
+    },
+    {
+      id: "filamento-fino",
+      phase: "Filamento fino",
+      title: "Monte o filamento fino do liso",
+      body: "Começamos só com a actina. Depois entram tropomiosina, caldesmona e calponina — como no esquema do filamento fino.",
+      type: "quiz",
+      onEnter: () => {
+        state.viewMode = "filament";
+        state.thinParts = { actin: true, tropo: false, cald: false, calp: false };
+        state.focusHighlight = null;
+      },
+      onLeave: () => {
+        state.viewMode = "cell";
+        state.focusHighlight = null;
+      },
+      quiz: [
+        {
+          q: "A base azul deste filamento é:",
+          options: ["F-actina", "Miosina (filamento espesso)", "Troponina"],
+          answer: 0,
+          onShow: () => {
+            state.thinParts = { actin: true, tropo: false, cald: false, calp: false };
+            state.focusHighlight = null;
+          },
+        },
+        {
+          q: "Qual o papel da caldesmona?",
+          options: [
+            "Bloqueia o sítio de ligação da miosina na actina",
+            "É o sensor de Ca²⁺ do filamento fino (como troponina C)",
+            "Monta o filamento espesso bipolar",
+          ],
+          answer: 0,
+          onShow: () => {
+            state.thinParts = { actin: true, tropo: true, cald: true, calp: false };
+            state.focusHighlight = "cald";
+            state.showTropomyosin = true;
+            state.showCaldesmon = true;
+          },
+        },
+        {
+          q: "Qual o papel da calponina?",
+          options: [
+            "Também bloqueia o sítio da miosina na actina (depende de Ca²⁺ / fosforilação)",
+            "Forma a cavéola na membrana",
+            "Fosforila a miosina (é a MLCK)",
+          ],
+          answer: 0,
+          onShow: () => {
+            state.thinParts = { actin: true, tropo: true, cald: true, calp: true };
+            state.focusHighlight = "calp";
+            state.showCalponin = true;
+          },
+        },
+        {
+          q: "E a troponina no músculo liso?",
+          options: [
+            "Está ausente; caldesmona e calponina regulam o filamento fino",
+            "Está no filamento fino, igual ao esquelético",
+            "Substitui a calmodulina no citosol",
+          ],
+          answer: 0,
+          onShow: () => {
+            state.thinParts = { actin: true, tropo: true, cald: true, calp: true };
+            state.focusHighlight = "tropo";
+          },
+        },
+      ],
+      feedback: "Filamento fino: actina + tropomiosina + caldesmona + calponina (sem troponina).",
     },
     {
       id: "miosina",
@@ -181,41 +266,9 @@
       type: "place",
       piece: "miosina",
       slot: { id: "miosina", x: 58, y: 40 },
+      onEnter: () => { state.viewMode = "cell"; state.focusHighlight = null; },
       unlock: () => { state.showMyosin = true; },
       feedback: "Miosina curva no lugar.",
-    },
-    {
-      id: "tropomiosina",
-      phase: "Regulação fina",
-      title: "Encaixe a tropomiosina",
-      body: "No filamento fino do liso também há tropomiosina.",
-      type: "place",
-      piece: "tropomiosina",
-      slot: { id: "tropomiosina", x: 36, y: 62 },
-      unlock: () => { state.showTropomyosin = true; },
-      feedback: "Tropomiosina colocada.",
-    },
-    {
-      id: "caldesmona",
-      phase: "Regulação fina",
-      title: "Encaixe a caldesmona",
-      body: "Proteína associada ao fino no músculo liso.",
-      type: "place",
-      piece: "caldesmona",
-      slot: { id: "caldesmona", x: 66, y: 66 },
-      unlock: () => { state.showCaldesmon = true; },
-      feedback: "Caldesmona colocada.",
-    },
-    {
-      id: "calponina",
-      phase: "Regulação fina",
-      title: "Encaixe a calponina",
-      body: "Outra proteína reguladora do filamento fino no liso.",
-      type: "place",
-      piece: "calponina",
-      slot: { id: "calponina", x: 28, y: 48 },
-      unlock: () => { state.showCalponin = true; },
-      feedback: "Calponina colocada.",
     },
     {
       id: "ca_out",
@@ -313,13 +366,18 @@
   function draw() {
     const g = geom();
     ctx.clearRect(0, 0, state.W, state.H);
-
     ctx.fillStyle = "#e8f1f6";
     ctx.fillRect(0, 0, state.W, state.H);
 
+    if (state.viewMode === "filament") {
+      drawThinFilament();
+      state.anim++;
+      requestAnimationFrame(draw);
+      return;
+    }
+
     const dim = state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin" || state.focus === "caveolae";
 
-    // células vizinhas
     ctx.globalAlpha = dim ? 0.1 : 0.22;
     drawSpindle(g.cx - g.rx * 0.5, g.cy - g.ry * 1.35, g.rx * 0.5, g.ry * 0.55);
     drawSpindle(g.cx + g.rx * 0.48, g.cy + g.ry * 1.3, g.rx * 0.48, g.ry * 0.5);
@@ -327,17 +385,13 @@
 
     drawSpindle(g.cx, g.cy, g.rx, g.ry, true);
 
-    // organelas (mitocôndrias + REL) — esmaecidas no foco
     ctx.globalAlpha = dim ? 0.28 : 0.85;
     drawMitosAndRel(g);
     ctx.globalAlpha = 1;
 
     drawNucleus(g);
-
-    // cavéolas sempre; destaque forte no foco
     drawCaveolae(g, state.focus === "caveolae");
 
-    // corpos densos
     if (state.showDense) {
       drawDense(g, {
         preview: false,
@@ -348,7 +402,6 @@
     if (state.showDesmin) drawDesmin(g, state.focus === "desmin");
     if (state.showActin) drawActin(g);
     if (state.showMyosin) drawMyosin(g);
-    if (state.showTropomyosin || state.showCaldesmon || state.showCalponin) drawFineReg(g);
     if (state.showCaOut) drawCaInflux(g);
     if (state.showCaRel) drawCaRel(g);
     if (state.showCaM) drawCaM(g);
@@ -361,6 +414,148 @@
 
     state.anim++;
     requestAnimationFrame(draw);
+  }
+
+  /** Filamento fino estilo do esquema: actina (azul) + tropomiosina (rosa) + caldesmona (amarelo) + calponina (verde) */
+  function drawThinFilament() {
+    const cx = state.W * 0.5;
+    const cy = state.H * 0.42;
+    const len = Math.min(state.W * 0.82, 520);
+    const x0 = cx - len / 2;
+    const x1 = cx + len / 2;
+    const parts = state.thinParts;
+    const hi = state.focusHighlight;
+
+    ctx.fillStyle = "#f7fafc";
+    ctx.strokeStyle = "#c5d3dc";
+    ctx.lineWidth = 1;
+    roundRect(24, 24, state.W - 48, state.H - 48, 16);
+    ctx.fill();
+    ctx.stroke();
+
+    ctx.fillStyle = "#1c2a33";
+    ctx.font = "700 16px Literata, Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Filamento fino do músculo liso", cx, 52);
+
+    ctx.font = "600 12px 'Source Sans 3', sans-serif";
+    ctx.fillStyle = "#5a6d78";
+    ctx.fillText(
+      parts.cald || parts.calp
+        ? "actina + proteínas reguladoras"
+        : parts.tropo
+          ? "actina + tropomiosina"
+          : "F-actina (base do aparelho contrátil)",
+      cx,
+      74
+    );
+
+    // actina: dupla hélice de esferas azuis
+    if (parts.actin) {
+      const n = 28;
+      for (let i = 0; i < n; i++) {
+        const t = i / (n - 1);
+        const x = x0 + t * len;
+        const phase = t * Math.PI * 6;
+        const y1 = cy - 10 * Math.sin(phase);
+        const y2 = cy - 10 * Math.sin(phase + Math.PI);
+        ctx.beginPath();
+        ctx.arc(x, y1, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#3b82c4";
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(x, y2, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#5a9fd4";
+        ctx.fill();
+      }
+    }
+
+    // tropomiosina: fitas rosa ao longo
+    if (parts.tropo) {
+      ctx.strokeStyle = hi === "tropo" ? "#c0265a" : "#e07a9a";
+      ctx.lineWidth = hi === "tropo" ? 4 : 3;
+      ctx.beginPath();
+      for (let i = 0; i <= 40; i++) {
+        const t = i / 40;
+        const x = x0 + t * len;
+        const y = cy - 16 * Math.sin(t * Math.PI * 6);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.beginPath();
+      for (let i = 0; i <= 40; i++) {
+        const t = i / 40;
+        const x = x0 + t * len;
+        const y = cy - 16 * Math.sin(t * Math.PI * 6 + Math.PI);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+    }
+
+    // caldesmona: aglomerados amarelos
+    if (parts.cald) {
+      const positions = [0.18, 0.42, 0.66, 0.88];
+      positions.forEach((t, idx) => {
+        const x = x0 + t * len;
+        const y = cy - 22 + (idx % 2) * 8;
+        drawLobe(x, y, "#e2b84a", hi === "cald");
+      });
+    }
+
+    // calponina: aglomerados verdes
+    if (parts.calp) {
+      const positions = [0.28, 0.52, 0.76];
+      positions.forEach((t, idx) => {
+        const x = x0 + t * len;
+        const y = cy + 18 - (idx % 2) * 6;
+        drawLobe(x, y, "#3d9e6f", hi === "calp");
+      });
+    }
+
+    // legenda
+    const legendY = state.H - 70;
+    const items = [];
+    if (parts.actin) items.push(["Actina", "#3b82c4"]);
+    if (parts.tropo) items.push(["Tropomiosina", "#e07a9a"]);
+    if (parts.cald) items.push(["Caldesmona", "#e2b84a"]);
+    if (parts.calp) items.push(["Calponina", "#3d9e6f"]);
+    const gap = Math.min(120, (state.W - 80) / Math.max(items.length, 1));
+    const lx0 = cx - ((items.length - 1) * gap) / 2;
+    items.forEach(([name, color], i) => {
+      const x = lx0 + i * gap;
+      ctx.beginPath();
+      ctx.arc(x - 38, legendY, 7, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.fillStyle = "#1c2a33";
+      ctx.font = "600 12px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "left";
+      ctx.fillText(name, x - 26, legendY + 4);
+    });
+
+    if (hi === "tropo") {
+      ctx.fillStyle = "#6b3f7a";
+      ctx.font = "700 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Sem troponina no liso", cx, legendY - 28);
+    }
+  }
+
+  function drawLobe(x, y, color, highlight) {
+    if (highlight) {
+      ctx.beginPath();
+      ctx.arc(x, y, 18, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(13,110,110,0.15)";
+      ctx.fill();
+    }
+    [[-6, -4], [6, -3], [0, 6], [-5, 5], [5, 4]].forEach(([dx, dy], i) => {
+      ctx.beginPath();
+      ctx.arc(x + dx, y + dy, 6 - (i % 2), 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+    });
   }
 
   function drawSpindle(cx, cy, rx, ry, main) {
@@ -693,7 +888,12 @@
       setTimeout(() => $("answer").focus(), 50);
     }
 
-    if (s.type === "place" || s.type === "place+quiz") {
+    if (s.type === "quiz") {
+      $("slots").innerHTML = "";
+      $("tray").innerHTML = "";
+      $("pools").innerHTML = "";
+      renderQuiz(s);
+    } else if (s.type === "place" || s.type === "place+quiz") {
       $("tray-wrap").classList.remove("hidden");
       renderTray(s);
       renderSlots(s);
@@ -779,7 +979,7 @@
       pools.appendChild(o);
     } else {
       // all 8 structural pieces visible; only current is active, others greyed until their step
-      const order = ["actina", "tropomiosina", "caldesmona", "calponina", "miosina", "calmodulina", "mlck"];
+      const order = ["miosina", "calmodulina", "mlck"];
       order.forEach((id) => {
         const p = PIECES[id];
         const unlocked = canDragPiece(id, s);
@@ -843,6 +1043,9 @@
       placed: {},
       quizDone: {},
       focus: null,
+      focusHighlight: null,
+      viewMode: "cell",
+      thinParts: { actin: false, tropo: false, cald: false, calp: false },
       showDense: false,
       showActinin: false,
       showDesmin: false,
