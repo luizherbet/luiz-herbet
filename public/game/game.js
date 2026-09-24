@@ -260,15 +260,29 @@
     },
     {
       id: "miosina",
-      phase: "Filamentos",
-      title: "Coloque a miosina curva",
-      body: "No liso, a miosina inativa fica dobrada (10S). Arraste até o encaixe.",
-      type: "place",
-      piece: "miosina",
-      slot: { id: "miosina", x: 58, y: 40 },
-      onEnter: () => { state.viewMode = "cell"; state.focusHighlight = null; },
-      unlock: () => { state.showMyosin = true; },
-      feedback: "Miosina curva no lugar.",
+      phase: "Filamento espesso",
+      title: "Miosina lateral-polar no liso",
+      body: "Os filamentos espessos aparecem na célula: cabeças em sentidos opostos em cada face, sem zona nua no centro.",
+      type: "quiz",
+      onEnter: () => {
+        state.viewMode = "cell";
+        state.focusHighlight = null;
+        state.showMyosin = true;
+        state.focus = "myosin";
+      },
+      onLeave: () => { state.focus = null; },
+      quiz: [
+        {
+          q: "O que NÃO existe na organização da miosina na célula muscular lisa?",
+          options: [
+            "Zona nua central",
+            "Organização lateral-polar das moléculas",
+            "Cabeças de miosina com atividade ATPase",
+          ],
+          answer: 0,
+        },
+      ],
+      feedback: "Correto — no liso a miosina é lateral-polar e não tem zona nua central (diferente do estriado bipolar).",
     },
     {
       id: "ca_out",
@@ -376,7 +390,7 @@
       return;
     }
 
-    const dim = state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin" || state.focus === "caveolae";
+    const dim = state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin" || state.focus === "caveolae" || state.focus === "myosin";
 
     ctx.globalAlpha = dim ? 0.1 : 0.22;
     drawSpindle(g.cx - g.rx * 0.5, g.cy - g.ry * 1.35, g.rx * 0.5, g.ry * 0.55);
@@ -385,7 +399,7 @@
 
     drawSpindle(g.cx, g.cy, g.rx, g.ry, true);
 
-    ctx.globalAlpha = dim ? 0.28 : 0.85;
+    ctx.globalAlpha = dim && state.focus !== "myosin" ? 0.28 : state.focus === "myosin" ? 0.35 : 0.85;
     drawMitosAndRel(g);
     ctx.globalAlpha = 1;
 
@@ -396,12 +410,13 @@
       drawDense(g, {
         preview: false,
         glow: state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin",
-        actinin: state.showActinin,
+        actinin: state.showActinin && state.focus !== "myosin",
       });
     }
-    if (state.showDesmin) drawDesmin(g, state.focus === "desmin");
+    if (state.showDesmin && state.focus !== "myosin") drawDesmin(g, state.focus === "desmin");
     if (state.showActin) drawActin(g);
-    if (state.showMyosin) drawMyosin(g);
+    if (state.showMyosin) drawMyosin(g, state.focus === "myosin");
+    if (state.focus === "myosin") drawMyosinCallout(g);
     if (state.showCaOut) drawCaInflux(g);
     if (state.showCaRel) drawCaRel(g);
     if (state.showCaM) drawCaM(g);
@@ -753,23 +768,105 @@
     });
   }
 
-  function drawMyosin(g) {
-    const loops = [
-      spindlePoint(g, -0.25, 0.2),
-      spindlePoint(g, 0.15, -0.25),
-      spindlePoint(g, 0.4, 0.15),
+  /** Filamentos espessos lateral-polares (liso): cabeças em sentidos opostos em cada face; sem zona nua central; pontas afiladas */
+  function drawMyosin(g, highlight) {
+    const filaments = [
+      { t0: -0.55, t1: 0.05, u: -0.35 },
+      { t0: -0.15, t1: 0.45, u: 0.25 },
+      { t0: 0.1, t1: 0.65, u: -0.15 },
     ];
-    ctx.strokeStyle = "#2b6cb0";
+    filaments.forEach((f) => drawSidePolarFilament(g, f.t0, f.t1, f.u, highlight));
+  }
+
+  function drawSidePolarFilament(g, t0, t1, u, highlight) {
+    const a = spindlePoint(g, t0, u);
+    const b = spindlePoint(g, t1, u);
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const ux = dx / len;
+    const uy = dy / len;
+    const px = -uy;
+    const py = ux;
+
+    // cauda (rosa/avermelhada)
+    ctx.strokeStyle = highlight ? "#c45c7a" : "#b85a72";
+    ctx.lineWidth = highlight ? 5 : 3.5;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(a.x, a.y);
+    ctx.lineTo(b.x, b.y);
+    ctx.stroke();
+
+    // extremidades afiladas/desnudas (sem cabeças)
+    const bare = len * 0.12;
+    const n = 10;
+    for (let i = 0; i < n; i++) {
+      const t = i / (n - 1);
+      const dist = t * len;
+      if (dist < bare || dist > len - bare) continue;
+      const x = a.x + ux * dist;
+      const y = a.y + uy * dist;
+      // face “de cima”: cabeças para um sentido (ao longo do filamento, +ux)
+      drawMyosinHead(x + px * 7, y + py * 7, ux, uy, highlight);
+      // face “de baixo”: sentido contrário
+      drawMyosinHead(x - px * 7, y - py * 7, -ux, -uy, highlight);
+    }
+  }
+
+  function drawMyosinHead(x, y, dirx, diry, highlight) {
+    const hx = x + dirx * 6;
+    const hy = y + diry * 6;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(hx, hy);
+    ctx.strokeStyle = highlight ? "#1e4e8c" : "#2b6cb0";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(hx, hy, highlight ? 4.5 : 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = highlight ? "#2563a8" : "#3a7ec4";
+    ctx.fill();
+  }
+
+  function drawMyosinCallout(g) {
+    const boxW = Math.min(220, state.W * 0.42);
+    const boxH = 88;
+    const x = state.W - boxW - 14;
+    const y = 12;
+    ctx.fillStyle = "rgba(255,255,255,0.92)";
+    ctx.strokeStyle = "#9bb0be";
+    ctx.lineWidth = 1;
+    roundRect(x, y, boxW, boxH, 10);
+    ctx.fill();
+    ctx.stroke();
+
+    // mini esquema lateral-polar
+    const mx = x + 16;
+    const my = y + 36;
+    const mlen = boxW - 32;
+    ctx.strokeStyle = "#b85a72";
     ctx.lineWidth = 3;
-    loops.forEach((p) => {
+    ctx.beginPath();
+    ctx.moveTo(mx, my);
+    ctx.lineTo(mx + mlen, my);
+    ctx.stroke();
+    for (let i = 2; i < 10; i++) {
+      const px = mx + (i / 11) * mlen;
       ctx.beginPath();
-      ctx.arc(p.x, p.y, 11, 0.2, Math.PI * 1.6);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(p.x + 9, p.y, 3.5, 0, Math.PI * 2);
-      ctx.fillStyle = "#1e4e8c";
+      ctx.arc(px, my - 8, 3, 0, Math.PI * 2);
+      ctx.fillStyle = "#2b6cb0";
       ctx.fill();
-    });
+      ctx.beginPath();
+      ctx.arc(px, my + 8, 3, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    // pontas desnudas
+    ctx.fillStyle = "#5a6d78";
+    ctx.font = "600 10px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("Lateral-polar · sem zona nua central", x + 12, y + 18);
+    ctx.fillText("Pontas afiladas/desnudas", x + 12, y + boxH - 12);
   }
 
   function drawFineReg(g) {
@@ -979,7 +1076,7 @@
       pools.appendChild(o);
     } else {
       // all 8 structural pieces visible; only current is active, others greyed until their step
-      const order = ["miosina", "calmodulina", "mlck"];
+      const order = ["calmodulina", "mlck"];
       order.forEach((id) => {
         const p = PIECES[id];
         const unlocked = canDragPiece(id, s);
