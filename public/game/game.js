@@ -13,9 +13,12 @@
     placed: {},
     quizDone: {},
     drag: null,
+    focus: null, // 'dense' | 'actinin' | 'desmin' | 'caveolae'
     // visual flags unlocked by steps
     showDense: false,
-    showCaveArrow: false,
+    showActinin: false,
+    showDesmin: false,
+    showCaveolae: true, // sempre visíveis; destaque no focus
     showActin: false,
     showMyosin: false,
     showTropomyosin: false,
@@ -26,6 +29,21 @@
     showCaM: false,
     showMlck: false,
   };
+
+  // posições no fuso: t = eixo longo (-1..1), u = espessura (-1..1)
+  const DENSE_CYTO = [
+    [-0.45, -0.25], [-0.2, 0.45], [0.05, -0.5], [0.28, 0.35],
+    [0.5, -0.2], [-0.05, 0.1], [0.15, 0.55], [-0.32, -0.5],
+  ];
+  const DENSE_PLAQUE = [
+    [-0.7, -0.85], [-0.35, 0.9], [0.0, -0.95], [0.35, 0.9],
+    [0.7, -0.85], [-0.55, 0.75], [0.55, 0.75], [0.2, -0.9],
+  ];
+  // cavéolas ao longo da membrana (lado ventral/dorsal)
+  const CAVEOLAE = [
+    [-0.55, -1], [-0.35, -1], [-0.15, -1], [0.1, -1], [0.3, -1],
+    [-0.5, 1], [-0.25, 1], [0.0, 1], [0.25, 1], [0.45, 1],
+  ];
 
   const ICONS = {
     corpos: svgDots("#8a5a2b"),
@@ -109,21 +127,24 @@
       id: "corpos",
       phase: "Âncoras",
       title: "Coloque os corpos densos",
-      body: "Arraste os corpos densos para o citoplasma. Depois responda sobre as âncoras.",
+      body: "Os pontos mais claros dentro do fuso são os alvos. Arraste os corpos densos para o citoplasma.",
       type: "place+quiz",
       piece: "corpos",
-      slot: { id: "corpos", x: 42, y: 42 },
-      unlock: () => { state.showDense = true; },
+      slot: { id: "corpos", x: 50, y: 48 },
+      onEnter: () => { state.focus = "dense"; },
+      unlock: () => { state.showDense = true; state.focus = "dense"; },
       quiz: [
         {
           q: "Que proteína de actina ancora nos corpos densos?",
           options: ["α-actinina", "Troponina C", "Titina"],
           answer: 0,
+          onShow: () => { state.focus = "actinin"; state.showActinin = true; },
         },
         {
           q: "Quais filamentos intermediários ligam a rede?",
           options: ["Desmina e vimentina", "Queratina e lamína", "Tubulina e dineína"],
           answer: 0,
+          onShow: () => { state.focus = "desmin"; state.showDesmin = true; },
         },
       ],
       feedback: "Corpos densos no lugar — α-actinina + desmina/vimentina.",
@@ -132,12 +153,17 @@
       id: "caveolas",
       phase: "Membrana",
       title: "O que são essas invaginações?",
-      body: "A seta aponta as invaginações da membrana onde entra Ca²⁺. Digite o nome.",
+      body: "Veja as curvas em frasco na membrana (seta). Digite o nome dessas invaginações.",
       type: "text",
       answers: ["caveolos", "caveolas", "caveola", "caveolo"],
-      unlock: () => { state.showCaveArrow = true; },
-      onEnter: () => showArrow(14, 56),
-      onLeave: () => hideArrow(),
+      onEnter: () => {
+        state.focus = "caveolae";
+        const g = geom();
+        // seta sobre a primeira cavéola superior
+        const p = spindlePoint(g, -0.35, -1);
+        showArrow((p.x / state.W) * 100, (p.y / state.H) * 100 - 4);
+      },
+      onLeave: () => { hideArrow(); state.focus = null; },
       feedback: "Correto — cavéolas (caveolos).",
     },
     {
@@ -259,9 +285,22 @@
   function geom() {
     return {
       cx: state.W * 0.5,
-      cy: state.H * 0.48,
-      rx: state.W * 0.46,
-      ry: state.H * 0.16,
+      cy: state.H * 0.46,
+      rx: state.W * 0.44,
+      ry: state.H * 0.17,
+    };
+  }
+
+  /** Altura do fuso em t ∈ [-1,1] — afila nas pontas */
+  function halfH(g, t) {
+    const s = 1 - t * t;
+    return g.ry * Math.max(0.08, s);
+  }
+
+  function spindlePoint(g, t, u) {
+    return {
+      x: g.cx + t * g.rx,
+      y: g.cy + u * halfH(g, t),
     };
   }
 
@@ -279,26 +318,41 @@
     const g = geom();
     ctx.clearRect(0, 0, state.W, state.H);
 
-    // background wash
     ctx.fillStyle = "#e8f1f6";
     ctx.fillRect(0, 0, state.W, state.H);
 
-    // neighboring ghost cells
-    ctx.globalAlpha = 0.25;
-    drawSpindle(g.cx - g.rx * 0.55, g.cy - g.ry * 1.15, g.rx * 0.55, g.ry * 0.55);
-    drawSpindle(g.cx + g.rx * 0.5, g.cy + g.ry * 1.1, g.rx * 0.5, g.ry * 0.5);
+    const dim = state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin" || state.focus === "caveolae";
+
+    // células vizinhas
+    ctx.globalAlpha = dim ? 0.1 : 0.22;
+    drawSpindle(g.cx - g.rx * 0.5, g.cy - g.ry * 1.35, g.rx * 0.5, g.ry * 0.55);
+    drawSpindle(g.cx + g.rx * 0.48, g.cy + g.ry * 1.3, g.rx * 0.48, g.ry * 0.5);
     ctx.globalAlpha = 1;
 
-    // main cell
     drawSpindle(g.cx, g.cy, g.rx, g.ry, true);
 
-    // organelles already present
-    drawOrganelles(g);
+    // organelas (mitocôndrias + REL) — esmaecidas no foco
+    ctx.globalAlpha = dim ? 0.28 : 0.85;
+    drawMitosAndRel(g);
+    ctx.globalAlpha = 1;
 
-    // nucleus
     drawNucleus(g);
 
-    if (state.showDense) drawDense(g);
+    // cavéolas sempre; destaque forte no foco
+    drawCaveolae(g, state.focus === "caveolae");
+
+    // corpos densos: preview claro na etapa, sólidos depois de colocar
+    if (state.focus === "dense" && !state.showDense) {
+      drawDense(g, { preview: true, glow: true });
+    }
+    if (state.showDense) {
+      drawDense(g, {
+        preview: false,
+        glow: state.focus === "dense" || state.focus === "actinin",
+        actinin: state.showActinin && state.focus === "actinin",
+      });
+    }
+    if (state.showDesmin) drawDesmin(g, state.focus === "desmin");
     if (state.showActin) drawActin(g);
     if (state.showMyosin) drawMyosin(g);
     if (state.showTropomyosin || state.showCaldesmon || state.showCalponin) drawFineReg(g);
@@ -307,11 +361,10 @@
     if (state.showCaM) drawCaM(g);
     if (state.showMlck) drawMlck(g);
 
-    // label
     ctx.fillStyle = "#5a6d78";
     ctx.font = "600 13px 'Source Sans 3', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("Célula muscular lisa", g.cx, state.H - 16);
+    ctx.fillText("Célula muscular lisa fusiforme", g.cx, state.H - 14);
 
     state.anim++;
     requestAnimationFrame(draw);
@@ -319,19 +372,18 @@
 
   function drawSpindle(cx, cy, rx, ry, main) {
     const grd = ctx.createLinearGradient(cx - rx, cy - ry, cx + rx, cy + ry);
-    grd.addColorStop(0, main ? "#f6c9d7" : "#e0b4c3");
+    grd.addColorStop(0, main ? "#f7cedb" : "#e0b4c3");
     grd.addColorStop(1, main ? "#d89aaf" : "#c98ea4");
-    // pontas afiladas (fusiforme), não elipse oval
     ctx.beginPath();
     ctx.moveTo(cx - rx, cy);
     ctx.bezierCurveTo(
-      cx - rx * 0.45, cy - ry * 1.15,
-      cx + rx * 0.45, cy - ry * 1.15,
+      cx - rx * 0.4, cy - ry * 1.2,
+      cx + rx * 0.4, cy - ry * 1.2,
       cx + rx, cy
     );
     ctx.bezierCurveTo(
-      cx + rx * 0.45, cy + ry * 1.15,
-      cx - rx * 0.45, cy + ry * 1.15,
+      cx + rx * 0.4, cy + ry * 1.2,
+      cx - rx * 0.4, cy + ry * 1.2,
       cx - rx, cy
     );
     ctx.closePath();
@@ -343,113 +395,190 @@
   }
 
   function drawNucleus(g) {
+    const dim = state.focus && state.focus !== "dense";
+    ctx.globalAlpha = dim ? 0.45 : 1;
     ctx.beginPath();
-    ctx.ellipse(g.cx, g.cy, Math.max(18, g.rx * 0.1), Math.max(12, g.ry * 0.45), 0, 0, Math.PI * 2);
+    ctx.ellipse(g.cx, g.cy, Math.max(16, g.rx * 0.09), Math.max(11, g.ry * 0.42), 0, 0, Math.PI * 2);
     ctx.fillStyle = "#6b3f7a";
     ctx.fill();
     ctx.beginPath();
-    ctx.ellipse(g.cx - 5, g.cy - 3, 4, 3, 0, 0, Math.PI * 2);
+    ctx.ellipse(g.cx - 4, g.cy - 3, 3.5, 2.8, 0, 0, Math.PI * 2);
     ctx.fillStyle = "#9b6aad";
     ctx.fill();
     ctx.fillStyle = "#4a2c57";
     ctx.font = "700 11px 'Source Sans 3', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("núcleo", g.cx, g.cy + Math.max(18, g.ry * 0.45) + 14);
+    ctx.fillText("núcleo", g.cx, g.cy + Math.max(16, g.ry * 0.42) + 12);
+    ctx.globalAlpha = 1;
   }
 
-  function drawOrganelles(g) {
-    // mitochondria-ish
+  function drawMitosAndRel(g) {
     const mitos = [
-      [-0.55, -0.35], [-0.35, 0.4], [0.45, -0.38], [0.55, 0.3], [0.15, -0.55],
+      [-0.5, -0.2], [-0.3, 0.35], [0.4, -0.3], [0.52, 0.25], [0.12, -0.4],
     ];
-    mitos.forEach(([dx, dy]) => {
-      const x = g.cx + dx * g.rx;
-      const y = g.cy + dy * g.ry;
+    mitos.forEach(([t, u]) => {
+      const p = spindlePoint(g, t, u);
       ctx.beginPath();
-      ctx.ellipse(x, y, 14, 7, dx, 0, Math.PI * 2);
+      ctx.ellipse(p.x, p.y, 11, 5.5, t * 0.6, 0, Math.PI * 2);
       ctx.fillStyle = "#c45c3a";
-      ctx.globalAlpha = 0.55;
       ctx.fill();
-      ctx.globalAlpha = 1;
     });
-    // REL sketch near membrane left
+    // REL perto da membrana esquerda (dentro)
+    const a = spindlePoint(g, -0.72, -0.15);
+    const b = spindlePoint(g, -0.62, 0.35);
     ctx.strokeStyle = "#2f7d9a";
     ctx.lineWidth = 2;
-    ctx.globalAlpha = 0.55;
     ctx.beginPath();
-    ctx.moveTo(g.cx - g.rx * 0.82, g.cy - 10);
-    ctx.bezierCurveTo(
-      g.cx - g.rx * 0.7, g.cy - 30,
-      g.cx - g.rx * 0.65, g.cy + 25,
-      g.cx - g.rx * 0.78, g.cy + 18
-    );
+    ctx.moveTo(a.x, a.y - 8);
+    ctx.bezierCurveTo(a.x + 14, a.y - 18, b.x + 8, b.y + 10, b.x, b.y);
     ctx.stroke();
-    ctx.globalAlpha = 1;
-    // caveolae cups on left membrane
-    for (let i = 0; i < 4; i++) {
-      const a = Math.PI + (-0.35 + i * 0.22);
-      const x = g.cx + Math.cos(a) * g.rx;
-      const y = g.cy + Math.sin(a) * g.ry;
+  }
+
+  /** Cavéolas em frasco na membrana — curvas abertas para fora */
+  function drawCaveolae(g, highlight) {
+    CAVEOLAE.forEach(([t, side], idx) => {
+      const rim = spindlePoint(g, t, side * 0.98);
+      const inward = side > 0 ? -1 : 1; // direção para dentro do citoplasma
+      const nx = 0;
+      const ny = inward;
+      const mouth = 7 + (highlight ? 2 : 0);
+      const depth = 11 + (highlight ? 3 : 0);
+
+      // centro do "frasco" ligeiramente para dentro
+      const cx = rim.x + nx * depth * 0.15;
+      const cy = rim.y + ny * (depth * 0.55);
+
       ctx.beginPath();
-      ctx.arc(x, y, 7, a - 1.1, a + 1.1);
-      ctx.strokeStyle = "#1a6a7a";
-      ctx.lineWidth = 2;
+      // abertura na membrana + fundo arredondado (Ω / frasco)
+      ctx.moveTo(rim.x - mouth, rim.y);
+      ctx.quadraticCurveTo(rim.x - mouth * 0.7, cy + ny * depth * 0.1, cx - mouth * 0.55, cy + ny * depth * 0.35);
+      ctx.quadraticCurveTo(cx, cy + ny * depth * 0.85, cx + mouth * 0.55, cy + ny * depth * 0.35);
+      ctx.quadraticCurveTo(rim.x + mouth * 0.7, cy + ny * depth * 0.1, rim.x + mouth, rim.y);
+      ctx.strokeStyle = highlight ? "#0a5c6a" : "#1a6a7a";
+      ctx.lineWidth = highlight ? 3 : 2.2;
       ctx.stroke();
+      if (highlight) {
+        ctx.fillStyle = "rgba(126, 200, 212, 0.45)";
+        ctx.fill();
+        // pulso
+        const pulse = 0.5 + 0.5 * Math.sin(state.anim * 0.12 + idx);
+        ctx.strokeStyle = `rgba(13,110,110,${0.35 + pulse * 0.45})`;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      }
+    });
+  }
+
+  function drawDense(g, opts) {
+    const { preview, glow, actinin } = opts;
+    const color = preview ? "rgba(168, 120, 60, 0.55)" : "#7a4a1e";
+    const glowCol = actinin ? "rgba(226, 184, 74, 0.7)" : "rgba(200, 150, 70, 0.45)";
+
+    DENSE_CYTO.forEach(([t, u]) => {
+      const p = spindlePoint(g, t, u * 0.75);
+      if (glow || preview) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, preview ? 9 : 10, 0, Math.PI * 2);
+        ctx.fillStyle = glowCol;
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, preview ? 4.5 : 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      if (actinin) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fillStyle = "#e2b84a";
+        ctx.fill();
+      }
+    });
+
+    DENSE_PLAQUE.forEach(([t, u]) => {
+      const p = spindlePoint(g, t, u * 0.92);
+      if (glow || preview) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+        ctx.fillStyle = glowCol;
+        ctx.fill();
+      }
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, preview ? 4 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = preview ? "rgba(110, 69, 32, 0.55)" : "#5c3a18";
+      ctx.fill();
+      if (actinin) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = "#e2b84a";
+        ctx.fill();
+      }
+    });
+
+    if (actinin) {
+      ctx.fillStyle = "#8a5a18";
+      ctx.font = "700 12px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("α-actinina nos densos", g.cx, g.cy - g.ry - 18);
     }
   }
 
-  function drawDense(g) {
-    const cyto = [
-      [-0.35, -0.25], [-0.1, 0.35], [0.25, -0.3], [0.4, 0.25], [0.05, 0.05], [-0.25, 0.1],
-    ];
-    cyto.forEach(([dx, dy]) => {
+  function drawDesmin(g, highlight) {
+    const pts = DENSE_CYTO.map(([t, u]) => spindlePoint(g, t, u * 0.75));
+    const links = [[0, 2], [2, 4], [1, 3], [3, 5], [5, 0], [1, 6], [6, 4], [7, 0], [7, 5]];
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = highlight ? "#6b3f7a" : "#8a6a9a";
+    ctx.lineWidth = highlight ? 2.4 : 1.6;
+    links.forEach(([a, b]) => {
+      if (!pts[a] || !pts[b]) return;
       ctx.beginPath();
-      ctx.arc(g.cx + dx * g.rx * 0.85, g.cy + dy * g.ry * 0.85, 5, 0, Math.PI * 2);
-      ctx.fillStyle = "#8a5a2b";
-      ctx.fill();
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
     });
-    // plaques on membrane
-    for (let i = 0; i < 8; i++) {
-      const a = (i / 8) * Math.PI * 2;
-      ctx.beginPath();
-      ctx.arc(g.cx + Math.cos(a) * g.rx * 0.98, g.cy + Math.sin(a) * g.ry * 0.98, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = "#6e4520";
-      ctx.fill();
+    ctx.setLineDash([]);
+    if (highlight) {
+      ctx.fillStyle = "#6b3f7a";
+      ctx.font = "700 12px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("desmina + vimentina", g.cx, g.cy - g.ry - 18);
     }
   }
 
   function drawActin(g) {
-    const pairs = [
-      [[-0.35, -0.25], [0.25, -0.3]],
-      [[-0.1, 0.35], [0.4, 0.25]],
-      [[-0.35, -0.25], [-0.25, 0.1]],
-      [[0.05, 0.05], [0.4, 0.25]],
-      [[-0.1, 0.35], [0.05, 0.05]],
-    ];
+    const pts = DENSE_CYTO.map(([t, u]) => spindlePoint(g, t, u * 0.75));
+    const plaques = DENSE_PLAQUE.map(([t, u]) => spindlePoint(g, t, u * 0.92));
     ctx.strokeStyle = "#c0392b";
-    ctx.lineWidth = 2.5;
-    pairs.forEach(([a, b]) => {
+    ctx.lineWidth = 2.4;
+    // densos ↔ densos
+    [[0, 2], [2, 4], [1, 3], [3, 5], [5, 0], [1, 6]].forEach(([a, b]) => {
       ctx.beginPath();
-      ctx.moveTo(g.cx + a[0] * g.rx * 0.85, g.cy + a[1] * g.ry * 0.85);
-      ctx.lineTo(g.cx + b[0] * g.rx * 0.85, g.cy + b[1] * g.ry * 0.85);
+      ctx.moveTo(pts[a].x, pts[a].y);
+      ctx.lineTo(pts[b].x, pts[b].y);
+      ctx.stroke();
+    });
+    // densos ↔ placas
+    [[0, 0], [1, 1], [2, 2], [3, 3], [4, 4], [5, 5]].forEach(([ci, pi]) => {
+      ctx.beginPath();
+      ctx.moveTo(pts[ci].x, pts[ci].y);
+      ctx.lineTo(plaques[pi].x, plaques[pi].y);
       ctx.stroke();
     });
   }
 
   function drawMyosin(g) {
     const loops = [
-      [g.cx - 30, g.cy - 20],
-      [g.cx + 20, g.cy + 10],
-      [g.cx + 50, g.cy - 5],
+      spindlePoint(g, -0.25, 0.2),
+      spindlePoint(g, 0.15, -0.25),
+      spindlePoint(g, 0.4, 0.15),
     ];
     ctx.strokeStyle = "#2b6cb0";
     ctx.lineWidth = 3;
-    loops.forEach(([x, y]) => {
+    loops.forEach((p) => {
       ctx.beginPath();
-      ctx.arc(x, y, 12, 0.2, Math.PI * 1.6);
+      ctx.arc(p.x, p.y, 11, 0.2, Math.PI * 1.6);
       ctx.stroke();
       ctx.beginPath();
-      ctx.arc(x + 10, y, 4, 0, Math.PI * 2);
+      ctx.arc(p.x + 9, p.y, 3.5, 0, Math.PI * 2);
       ctx.fillStyle = "#1e4e8c";
       ctx.fill();
     });
@@ -457,59 +586,61 @@
 
   function drawFineReg(g) {
     if (state.showTropomyosin) {
+      const a = spindlePoint(g, -0.35, 0.4);
+      const b = spindlePoint(g, 0.4, 0.35);
       ctx.strokeStyle = "#8e44ad";
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(g.cx - 40, g.cy + 40);
-      ctx.bezierCurveTo(g.cx - 10, g.cy + 20, g.cx + 10, g.cy + 60, g.cx + 40, g.cy + 35);
+      ctx.moveTo(a.x, a.y);
+      ctx.bezierCurveTo(g.cx - 20, g.cy + 30, g.cx + 20, g.cy + 40, b.x, b.y);
       ctx.stroke();
     }
     if (state.showCaldesmon) {
+      const p = spindlePoint(g, 0.5, 0.4);
       ctx.fillStyle = "#16a085";
       ctx.beginPath();
-      ctx.ellipse(g.cx + 70, g.cy + 55, 12, 8, 0.4, 0, Math.PI * 2);
+      ctx.ellipse(p.x, p.y, 10, 7, 0.3, 0, Math.PI * 2);
       ctx.fill();
     }
     if (state.showCalponin) {
+      const p = spindlePoint(g, -0.4, 0.3);
       ctx.fillStyle = "#d35400";
       ctx.beginPath();
-      ctx.ellipse(g.cx - 70, g.cy + 20, 11, 8, -0.3, 0, Math.PI * 2);
+      ctx.ellipse(p.x, p.y, 10, 7, -0.3, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
   function drawCaInflux(g) {
     const t = (state.anim % 60) / 60;
-    for (let i = 0; i < 5; i++) {
-      const a = Math.PI + 0.1 * i;
-      const x0 = g.cx + Math.cos(a) * (g.rx + 28);
-      const y0 = g.cy + Math.sin(a) * (g.ry + 8);
-      const x1 = g.cx + Math.cos(a) * (g.rx - 10);
-      const y1 = g.cy + Math.sin(a) * (g.ry - 6);
-      const x = x0 + (x1 - x0) * ((t + i * 0.15) % 1);
-      const y = y0 + (y1 - y0) * ((t + i * 0.15) % 1);
+    CAVEOLAE.filter((c) => c[1] < 0).forEach(([tt], i) => {
+      const rim = spindlePoint(g, tt, -0.98);
+      const inn = spindlePoint(g, tt, -0.35);
+      const k = (t + i * 0.12) % 1;
+      const x = rim.x + (inn.x - rim.x) * k;
+      const y = rim.y + (inn.y - rim.y) * k;
       ctx.beginPath();
-      ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+      ctx.arc(x, y, 3.2, 0, Math.PI * 2);
       ctx.fillStyle = "#3498db";
       ctx.fill();
-    }
+    });
   }
 
   function drawCaRel(g) {
     const t = (state.anim % 50) / 50;
     for (let i = 0; i < 6; i++) {
-      const x = g.cx + g.rx * 0.55 + Math.sin(i + t * 6) * 8;
-      const y = g.cy - 10 + i * 8 + t * 10;
+      const p = spindlePoint(g, 0.55, -0.2 + i * 0.12);
       ctx.beginPath();
-      ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.arc(p.x + Math.sin(i + t * 5) * 4, p.y + t * 6, 2.8, 0, Math.PI * 2);
       ctx.fillStyle = "#1a6a7a";
       ctx.fill();
     }
   }
 
   function drawCaM(g) {
+    const p = spindlePoint(g, 0, -0.35);
     ctx.beginPath();
-    ctx.arc(g.cx, g.cy - g.ry * 0.35, 16, 0, Math.PI * 2);
+    ctx.arc(p.x, p.y, 14, 0, Math.PI * 2);
     ctx.fillStyle = "rgba(39,174,96,0.25)";
     ctx.fill();
     ctx.lineWidth = 3;
@@ -518,8 +649,9 @@
   }
 
   function drawMlck(g) {
+    const p = spindlePoint(g, 0.3, -0.45);
     ctx.fillStyle = "#0d6e6e";
-    roundRect(g.cx + g.rx * 0.25, g.cy - g.ry * 0.55, 36, 22, 6);
+    roundRect(p.x - 16, p.y - 10, 32, 20, 6);
     ctx.fill();
   }
 
@@ -597,6 +729,7 @@
       return;
     }
     const item = s.quiz[nextIdx];
+    if (item.onShow) item.onShow();
     box.innerHTML = "";
     const q = document.createElement("p");
     q.className = "quiz-q";
@@ -695,6 +828,7 @@
     $("btn-next").classList.remove("hidden");
     $("btn-next").textContent = s.final ? "Concluir" : "Próxima etapa";
     if (s.onLeave) s.onLeave();
+    if (s.id === "corpos") state.focus = null;
     hideArrow();
   }
 
@@ -716,8 +850,10 @@
     Object.assign(state, {
       placed: {},
       quizDone: {},
+      focus: null,
       showDense: false,
-      showCaveArrow: false,
+      showActinin: false,
+      showDesmin: false,
       showActin: false,
       showMyosin: false,
       showTropomyosin: false,
