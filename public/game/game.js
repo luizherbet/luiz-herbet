@@ -32,6 +32,10 @@
     showCaM: false,
     showRelNearCaveolae: false,
     caAnim: { playing: false, phase: "idle", t0: 0, done: false },
+    cascadeAnim: { playing: false, phase: "idle", t0: 0, done: false, step: 0 },
+    shorten: 0,
+    shortenTarget: 0,
+    myosinActive: false,
     showMlck: false,
   };
 
@@ -292,6 +296,9 @@
       title: "Entrada de Ca²⁺ e liberação do REL",
       body: "O REL fica junto das cavéolas e armazena Ca²⁺. Toque no botão para ver: ① Ca²⁺ entra pela membrana nas cavéolas ② IP₃ estimula o REL ③ o REL libera mais Ca²⁺.",
       type: "anim",
+      animId: "ca",
+      animLabel: "Animar entrada de Ca²⁺",
+      animRepeat: "Repetir animação",
       onEnter: () => {
         state.viewMode = "cell";
         state.focus = "caveolae";
@@ -307,27 +314,30 @@
       feedback: "Ca²⁺ entrou pelas cavéolas e o REL liberou mais Ca²⁺ (via IP₃).",
     },
     {
-      id: "calmodulina",
-      phase: "Sensor",
-      title: "Ative a calmodulina",
-      body: "Sem troponina no liso: o Ca²⁺ liga-se à calmodulina (CaM).",
-      type: "place",
-      piece: "calmodulina",
-      slot: { id: "calmodulina", x: 50, y: 36 },
-      unlock: () => { state.showCaM = true; },
-      feedback: "Calmodulina ativada por Ca²⁺.",
-    },
-    {
-      id: "mlck",
+      id: "contracao",
       phase: "Contração",
-      title: "Ative a MLCK",
-      body: "O complexo Ca²⁺–CaM ativa a MLCK, que fosforila a miosina.",
-      type: "place",
-      piece: "mlck",
-      slot: { id: "mlck", x: 62, y: 30 },
-      unlock: () => { state.showMlck = true; },
-      feedback: "MLCK ativada — a célula pode contrair.",
+      title: "Cascata até a contração",
+      body: "Veja o caminho: Ca²⁺ → calmodulina → MLCK → miosina ativa → interação com actina → contração da célula.",
+      type: "anim",
+      animId: "contracao",
+      animLabel: "Animar cascata e contração",
+      animRepeat: "Repetir cascata",
       final: true,
+      onEnter: () => {
+        state.viewMode = "cascade";
+        state.focus = null;
+        state.showRelNearCaveolae = false;
+        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: false, step: 0 };
+        state.shorten = 0;
+        state.showCaM = false;
+        state.showMlck = false;
+        state.myosinActive = false;
+      },
+      onLeave: () => {
+        state.viewMode = "cell";
+        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: state.cascadeAnim.done, step: 0 };
+      },
+      feedback: "Cascata completa: Ca²⁺–CaM → MLCK → miosina ativa → actina ↔ miosina → contração.",
     },
   ];
 
@@ -346,11 +356,13 @@
   }
 
   function geom() {
+    const s = state.shorten || 0;
     return {
       cx: state.W * 0.5,
       cy: state.H * 0.46,
-      rx: state.W * 0.44,
-      ry: state.H * 0.17,
+      rx: state.W * 0.44 * (1 - s * 0.28),
+      ry: state.H * 0.17 * (1 + s * 0.55),
+      s,
     };
   }
 
@@ -390,6 +402,24 @@
       return;
     }
 
+    if (state.viewMode === "cascade") {
+      updateCascadeAnim();
+      drawCascade();
+      state.anim++;
+      requestAnimationFrame(draw);
+      return;
+    }
+
+    // se a cascata passou para a célula (fase contração), continua o timer
+    if (state.cascadeAnim && state.cascadeAnim.playing) {
+      updateCascadeAnim();
+    }
+
+    // suaviza encurtamento da célula
+    if (typeof state.shortenTarget === "number") {
+      state.shorten += (state.shortenTarget - state.shorten) * 0.06;
+    }
+
     const dim = state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin" || state.focus === "caveolae" || state.focus === "myosin";
 
     ctx.globalAlpha = dim ? 0.1 : 0.22;
@@ -423,6 +453,12 @@
     }
     if (state.showCaM) drawCaM(g);
     if (state.showMlck) drawMlck(g);
+    if ((state.shorten || 0) > 0.2) {
+      ctx.fillStyle = "#c45c3a";
+      ctx.font = "700 18px Literata, Georgia, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("CONTRAÇÃO", g.cx, 28);
+    }
 
     ctx.fillStyle = "#5a6d78";
     ctx.font = "600 13px 'Source Sans 3', sans-serif";
@@ -602,8 +638,14 @@
   function drawNucleus(g) {
     const dim = state.focus && state.focus !== "dense";
     ctx.globalAlpha = dim ? 0.45 : 1;
+    const s = g.s || 0;
     ctx.beginPath();
-    ctx.ellipse(g.cx, g.cy, Math.max(16, g.rx * 0.09), Math.max(11, g.ry * 0.42), 0, 0, Math.PI * 2);
+    if (s > 0.35) {
+      // núcleo em saca-rolhas na contração
+      ctx.ellipse(g.cx - s * 6, g.cy, Math.max(14, g.rx * 0.09), Math.max(10, g.ry * 0.38), -0.45 * s, 0, Math.PI * 2);
+    } else {
+      ctx.ellipse(g.cx, g.cy, Math.max(16, g.rx * 0.09), Math.max(11, g.ry * 0.42), 0, 0, Math.PI * 2);
+    }
     ctx.fillStyle = "#6b3f7a";
     ctx.fill();
     ctx.beginPath();
@@ -613,7 +655,7 @@
     ctx.fillStyle = "#4a2c57";
     ctx.font = "700 11px 'Source Sans 3', sans-serif";
     ctx.textAlign = "center";
-    ctx.fillText("núcleo", g.cx, g.cy + Math.max(16, g.ry * 0.42) + 12);
+    ctx.fillText(s > 0.35 ? "núcleo (saca-rolhas)" : "núcleo", g.cx, g.cy + Math.max(16, g.ry * 0.42) + 12);
     ctx.globalAlpha = 1;
   }
 
@@ -1030,19 +1072,6 @@
     }
   }
 
-  function updateAnimCaption(phase) {
-    const el = $("anim-caption");
-    if (!el) return;
-    const map = {
-      idle: "REL junto das cavéolas armazena Ca²⁺. Toque para animar.",
-      entry: "① Ca²⁺ entra pela membrana nas cavéolas…",
-      ip3: "② IP₃ estimula o REL próximo…",
-      release: "③ REL libera Ca²⁺ para o citosol…",
-      done: "Animação concluída. Pode avançar ou repetir.",
-    };
-    el.textContent = map[phase] || map.idle;
-  }
-
   function onCaAnimDone() {
     const s = step();
     if (!s || s.id !== "calcio") return;
@@ -1051,11 +1080,12 @@
     const btn = $("btn-anim");
     if (btn) {
       btn.disabled = false;
-      btn.textContent = "Repetir animação";
+      btn.textContent = s.animRepeat || "Repetir animação";
     }
     setFeedback(true, s.feedback);
     $("btn-next").classList.remove("hidden");
     $("btn-next").textContent = "Próxima etapa";
+    updateAnimCaption("done");
   }
 
   function startCaAnim() {
@@ -1073,6 +1103,206 @@
     $("btn-next").classList.add("hidden");
     clearFeedback();
     updateAnimCaption("entry");
+  }
+
+  const CASCADE_STEPS = [
+    { key: "ca", label: "Ca²⁺", sub: "citosol" },
+    { key: "cam", label: "CALMODULINA", sub: "sensor" },
+    { key: "complex", label: "Ca²⁺–CALMODULINA", sub: "complexo ativo" },
+    { key: "mlck", label: "MLCK", sub: "quinase" },
+    { key: "phos", label: "fosforila a MIOSINA", sub: "cadeia leve" },
+    { key: "active", label: "MIOSINA ATIVA", sub: "lateral-polar" },
+    { key: "cross", label: "ACTINA  ↔  MIOSINA", sub: "ciclagem de pontes" },
+    { key: "contract", label: "CONTRAÇÃO", sub: "célula encurta" },
+  ];
+
+  function startContractionAnim() {
+    state.viewMode = "cascade";
+    state.shorten = 0;
+    state.shortenTarget = 0;
+    state.showCaM = false;
+    state.showMlck = false;
+    state.myosinActive = false;
+    state.cascadeAnim = {
+      playing: true,
+      phase: "run",
+      t0: performance.now(),
+      done: !!(state.cascadeAnim && state.cascadeAnim.done),
+      step: 0,
+    };
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Animando…";
+    }
+    $("btn-next").classList.add("hidden");
+    clearFeedback();
+    updateAnimCaption("cascade");
+  }
+
+  function updateCascadeAnim() {
+    const anim = state.cascadeAnim;
+    if (!anim || !anim.playing) return;
+    const elapsed = (performance.now() - anim.t0) / 1000;
+    const stepDur = 0.85;
+    const step = Math.min(CASCADE_STEPS.length - 1, Math.floor(elapsed / stepDur));
+    anim.step = step;
+
+    if (step >= 1) state.showCaM = true;
+    if (step >= 3) state.showMlck = true;
+    if (step >= 5) state.myosinActive = true;
+
+    if (step >= 7) {
+      anim.phase = "contract";
+      state.viewMode = "cell";
+      state.focus = null;
+      state.showRelNearCaveolae = false;
+      state.showCaOut = true;
+      state.showCaRel = true;
+      state.showActin = true;
+      state.showMyosin = true;
+      state.shortenTarget = 0.88;
+      // keep playing until contraction settles ~2s after contract start
+      const contractStart = 7 * stepDur;
+      if (elapsed > contractStart + 2.2) {
+        anim.playing = false;
+        anim.done = true;
+        anim.phase = "done";
+        onCascadeAnimDone();
+      }
+    }
+
+    const captions = [
+      "Ca²⁺ no citosol…",
+      "Ca²⁺ encontra a calmodulina…",
+      "Forma-se Ca²⁺–calmodulina…",
+      "O complexo ativa a MLCK…",
+      "MLCK fosforila a miosina…",
+      "Miosina fica ativa…",
+      "Actina ↔ miosina (pontes cruzadas)…",
+      "A célula se contrai!",
+    ];
+    updateAnimCaption("custom", captions[step] || "");
+  }
+
+  function updateAnimCaption(phase, custom) {
+    const el = $("anim-caption");
+    if (!el) return;
+    if (phase === "custom") {
+      el.textContent = custom;
+      return;
+    }
+    if (phase === "cascade") {
+      el.textContent = "Toque para ver a cascata até a contração.";
+      return;
+    }
+    const map = {
+      idle: "REL junto das cavéolas armazena Ca²⁺. Toque para animar.",
+      entry: "① Ca²⁺ entra pela membrana nas cavéolas…",
+      ip3: "② IP₃ estimula o REL próximo…",
+      release: "③ REL libera Ca²⁺ para o citosol…",
+      done: "Animação concluída. Pode avançar ou repetir.",
+    };
+    el.textContent = map[phase] || map.idle;
+  }
+
+  function onCascadeAnimDone() {
+    const s = step();
+    if (!s || s.id !== "contracao") return;
+    const btn = $("btn-anim");
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = s.animRepeat || "Repetir cascata";
+    }
+    setFeedback(true, s.feedback);
+    $("btn-next").classList.remove("hidden");
+    $("btn-next").textContent = "Concluir";
+    updateAnimCaption("custom", "Contração concluída. Pode repetir ou concluir.");
+  }
+
+  function drawCascade() {
+    const cx = state.W * 0.5;
+    const anim = state.cascadeAnim || { step: -1 };
+    const active = anim.step|0;
+
+    ctx.fillStyle = "#f4f8fa";
+    ctx.fillRect(0, 0, state.W, state.H);
+
+    ctx.fillStyle = "#1c2a33";
+    ctx.font = "700 16px Literata, Georgia, serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Via de contração do músculo liso", cx, 36);
+
+    const startY = 58;
+    const gap = Math.min(52, (state.H - 90) / CASCADE_STEPS.length);
+
+    CASCADE_STEPS.forEach((item, i) => {
+      const y = startY + i * gap;
+      const on = i <= active;
+      const current = i === active;
+
+      // seta
+      if (i > 0) {
+        ctx.strokeStyle = i <= active ? "#0d6e6e" : "#c5d3dc";
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(cx, y - gap + 18);
+        ctx.lineTo(cx, y - 14);
+        ctx.stroke();
+        // ponta
+        if (on) {
+          ctx.beginPath();
+          ctx.moveTo(cx, y - 12);
+          ctx.lineTo(cx - 5, y - 20);
+          ctx.lineTo(cx + 5, y - 20);
+          ctx.closePath();
+          ctx.fillStyle = "#0d6e6e";
+          ctx.fill();
+        }
+      }
+
+      const w = Math.min(280, state.W * 0.7);
+      const h = 34;
+      const x = cx - w / 2;
+      ctx.beginPath();
+      roundRect(x, y - h / 2, w, h, 10);
+      if (current) {
+        ctx.fillStyle = "#0d6e6e";
+        ctx.fill();
+        ctx.fillStyle = "#f4fffe";
+      } else if (on) {
+        ctx.fillStyle = "#e6f5ec";
+        ctx.fill();
+        ctx.strokeStyle = "#8fc5a5";
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.fillStyle = "#1f7a4d";
+      } else {
+        ctx.fillStyle = "#eef3f6";
+        ctx.fill();
+        ctx.strokeStyle = "#c5d3dc";
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.fillStyle = "#8a9aa5";
+      }
+      ctx.font = "700 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText(item.label, cx, y + 1);
+      ctx.font = "600 10px 'Source Sans 3', sans-serif";
+      ctx.globalAlpha = current ? 0.85 : 0.7;
+      ctx.fillText(item.sub, cx, y + 14);
+      ctx.globalAlpha = 1;
+
+      // Ca²⁺ visual no topo
+      if (i === 0 && on) {
+        for (let k = 0; k < 5; k++) {
+          ctx.beginPath();
+          ctx.arc(cx - 40 + k * 20, y - 28, 4, 0, Math.PI * 2);
+          ctx.fillStyle = "#3498db";
+          ctx.fill();
+        }
+      }
+    });
   }
 
   function drawCaM(g) {
@@ -1149,12 +1379,15 @@
       $("pools").innerHTML = "";
       $("anim-wrap").classList.remove("hidden");
       const btn = $("btn-anim");
+      const done = s.animId === "ca" ? state.caAnim.done : state.cascadeAnim.done;
       btn.disabled = false;
-      btn.textContent = state.caAnim.done ? "Repetir animação" : "Animar entrada de Ca²⁺";
-      updateAnimCaption(state.caAnim.done ? "done" : "idle");
-      if (state.caAnim.done) {
+      btn.textContent = done ? (s.animRepeat || "Repetir") : (s.animLabel || "Animar");
+      if (s.animId === "ca") updateAnimCaption(done ? "done" : "idle");
+      else updateAnimCaption(done ? "custom" : "cascade", done ? "Contração concluída. Pode repetir ou concluir." : "");
+      if (done) {
         setFeedback(true, s.feedback);
         $("btn-next").classList.remove("hidden");
+        $("btn-next").textContent = s.final ? "Concluir" : "Próxima etapa";
       }
     } else if (s.type === "place" || s.type === "place+quiz") {
       $("tray-wrap").classList.remove("hidden");
@@ -1322,6 +1555,10 @@
       showCaM: false,
       showRelNearCaveolae: false,
       caAnim: { playing: false, phase: "idle", t0: 0, done: false },
+      cascadeAnim: { playing: false, phase: "idle", t0: 0, done: false, step: 0 },
+      shorten: 0,
+      shortenTarget: 0,
+      myosinActive: false,
       showMlck: false,
     });
   }
@@ -1420,7 +1657,11 @@
   });
 
   $("btn-next").onclick = goNext;
-  $("btn-anim").onclick = startCaAnim;
+  $("btn-anim").onclick = () => {
+    const s = step();
+    if (s.animId === "contracao") startContractionAnim();
+    else startCaAnim();
+  };
   $("btn-restart").onclick = () => {
     state.index = 0;
     resetVisuals();
