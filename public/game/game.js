@@ -126,28 +126,24 @@
     {
       id: "corpos",
       phase: "Âncoras",
-      title: "Coloque os corpos densos",
-      body: "Os pontos mais claros dentro do fuso são os alvos. Arraste os corpos densos para o citoplasma.",
-      type: "place+quiz",
-      piece: "corpos",
-      slot: { id: "corpos", x: 50, y: 48 },
-      onEnter: () => { state.focus = "dense"; },
-      unlock: () => { state.showDense = true; state.focus = "dense"; },
-      quiz: [
-        {
-          q: "Que proteína de actina ancora nos corpos densos?",
-          options: ["α-actinina", "Troponina C", "Titina"],
-          answer: 0,
-          onShow: () => { state.focus = "actinin"; state.showActinin = true; },
-        },
-        {
-          q: "Quais filamentos intermediários ligam a rede?",
-          options: ["Desmina e vimentina", "Queratina e lamína", "Tubulina e dineína"],
-          answer: 0,
-          onShow: () => { state.focus = "desmin"; state.showDesmin = true; },
-        },
+      title: "Qual o nome desta estrutura?",
+      body: "Os pontos escuros no citoplasma e na membrana contêm α-actinina. A rede tracejada que os liga é de desmina e vimentina. Digite o nome da estrutura.",
+      type: "text",
+      answers: [
+        "corpos densos",
+        "corpo denso",
+        "corpos densos e placas densas",
+        "placas densas",
+        "corpo densos",
       ],
-      feedback: "Corpos densos no lugar — α-actinina + desmina/vimentina.",
+      onEnter: () => {
+        state.focus = "desmin";
+        state.showDense = true;
+        state.showActinin = true;
+        state.showDesmin = true;
+      },
+      onLeave: () => { state.focus = null; },
+      feedback: "Correto — corpos densos (com α-actinina; rede de desmina e vimentina).",
     },
     {
       id: "caveolas",
@@ -341,15 +337,12 @@
     // cavéolas sempre; destaque forte no foco
     drawCaveolae(g, state.focus === "caveolae");
 
-    // corpos densos: preview claro na etapa, sólidos depois de colocar
-    if (state.focus === "dense" && !state.showDense) {
-      drawDense(g, { preview: true, glow: true });
-    }
+    // corpos densos
     if (state.showDense) {
       drawDense(g, {
         preview: false,
-        glow: state.focus === "dense" || state.focus === "actinin",
-        actinin: state.showActinin && state.focus === "actinin",
+        glow: state.focus === "dense" || state.focus === "actinin" || state.focus === "desmin",
+        actinin: state.showActinin,
       });
     }
     if (state.showDesmin) drawDesmin(g, state.focus === "desmin");
@@ -518,7 +511,7 @@
       ctx.fillStyle = "#8a5a18";
       ctx.font = "700 12px 'Source Sans 3', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("α-actinina nos densos", g.cx, g.cy - g.ry - 18);
+      ctx.fillText("α-actinina", g.cx - g.rx * 0.35, g.cy - g.ry - 10);
     }
   }
 
@@ -540,7 +533,7 @@
       ctx.fillStyle = "#6b3f7a";
       ctx.font = "700 12px 'Source Sans 3', sans-serif";
       ctx.textAlign = "center";
-      ctx.fillText("desmina + vimentina", g.cx, g.cy - g.ry - 18);
+      ctx.fillText("desmina + vimentina", g.cx + g.rx * 0.2, g.cy - g.ry - 10);
     }
   }
 
@@ -786,7 +779,7 @@
       pools.appendChild(o);
     } else {
       // all 8 structural pieces visible; only current is active, others greyed until their step
-      const order = ["actina", "tropomiosina", "caldesmona", "calponina", "miosina", "corpos", "calmodulina", "mlck"];
+      const order = ["actina", "tropomiosina", "caldesmona", "calponina", "miosina", "calmodulina", "mlck"];
       order.forEach((id) => {
         const p = PIECES[id];
         const unlocked = canDragPiece(id, s);
@@ -828,7 +821,6 @@
     $("btn-next").classList.remove("hidden");
     $("btn-next").textContent = s.final ? "Concluir" : "Próxima etapa";
     if (s.onLeave) s.onLeave();
-    if (s.id === "corpos") state.focus = null;
     hideArrow();
   }
 
