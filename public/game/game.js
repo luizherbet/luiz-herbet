@@ -327,7 +327,7 @@
         state.viewMode = "cascade";
         state.focus = null;
         state.showRelNearCaveolae = false;
-        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: false, step: 0 };
+        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: false, step: -1, localT: 0 };
         state.shorten = 0;
         state.shortenTarget = 0;
         state.showCaM = false;
@@ -336,7 +336,7 @@
       },
       onLeave: () => {
         state.viewMode = "cell";
-        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: state.cascadeAnim.done, step: 0 };
+        state.cascadeAnim = { playing: false, phase: "idle", t0: 0, done: state.cascadeAnim.done, step: state.cascadeAnim.step, localT: 0 };
       },
       feedback: "Cascata completa: Ca²⁺–CaM → MLCK → miosina ativa → actina ↔ miosina → contração.",
     },
@@ -1138,15 +1138,30 @@
   }
 
   const CASCADE_STEPS = [
-    { key: "ca", label: "Ca²⁺", sub: "citosol" },
-    { key: "cam", label: "CALMODULINA", sub: "sensor" },
-    { key: "complex", label: "Ca²⁺–CALMODULINA", sub: "complexo ativo" },
-    { key: "mlck", label: "MLCK", sub: "quinase" },
-    { key: "phos", label: "fosforila a MIOSINA", sub: "cadeia leve" },
-    { key: "active", label: "MIOSINA ATIVA", sub: "lateral-polar" },
-    { key: "cross", label: "ACTINA  ↔  MIOSINA", sub: "ciclagem de pontes" },
-    { key: "contract", label: "CONTRAÇÃO", sub: "célula encurta" },
+    { key: "ca", label: "Ca²⁺" },
+    { key: "cam", label: "CaM" },
+    { key: "complex", label: "Ca²⁺–CaM" },
+    { key: "mlck", label: "MLCK" },
+    { key: "phos", label: "–P" },
+    { key: "active", label: "Miosina*" },
+    { key: "cross", label: "Pontes" },
+    { key: "contract", label: "Contração" },
   ];
+
+  // ritmo didático por etapa (segundos)
+  const CASCADE_DURS = [2.8, 2.6, 2.8, 2.8, 3.0, 2.6, 3.2, 3.8];
+
+  function cascadeTiming(elapsed) {
+    let acc = 0;
+    for (let i = 0; i < CASCADE_DURS.length; i++) {
+      acc += CASCADE_DURS[i];
+      if (elapsed < acc) {
+        return { step: i, localT: (elapsed - (acc - CASCADE_DURS[i])) / CASCADE_DURS[i], finished: false };
+      }
+    }
+    const last = CASCADE_DURS.length - 1;
+    return { step: last, localT: 1, finished: true };
+  }
 
   function startContractionAnim() {
     state.viewMode = "cascade";
@@ -1161,6 +1176,7 @@
       t0: performance.now(),
       done: !!(state.cascadeAnim && state.cascadeAnim.done),
       step: 0,
+      localT: 0,
     };
     const btn = $("btn-anim");
     if (btn) {
@@ -1176,16 +1192,15 @@
     const anim = state.cascadeAnim;
     if (!anim || !anim.playing) return;
     const elapsed = (performance.now() - anim.t0) / 1000;
-    const stepDur = 2.2;
-    const step = Math.min(CASCADE_STEPS.length - 1, Math.floor(elapsed / stepDur));
-    anim.step = step;
-    anim.localT = (elapsed - step * stepDur) / stepDur;
+    const info = cascadeTiming(elapsed);
+    anim.step = info.step;
+    anim.localT = info.localT;
 
-    if (step >= 1) state.showCaM = true;
-    if (step >= 3) state.showMlck = true;
-    if (step >= 5) state.myosinActive = true;
+    if (info.step >= 1) state.showCaM = true;
+    if (info.step >= 3) state.showMlck = true;
+    if (info.step >= 5) state.myosinActive = true;
 
-    if (step >= 7) {
+    if (info.step >= 7) {
       anim.phase = "contract";
       state.viewMode = "cell";
       state.focus = null;
@@ -1194,27 +1209,30 @@
       state.showCaRel = true;
       state.showActin = true;
       state.showMyosin = true;
+      state.showDense = true;
+      state.showActinin = true;
+      state.showDesmin = true;
       state.shortenTarget = 0.88;
-      const contractStart = 7 * stepDur;
-      if (elapsed > contractStart + 3.5) {
-        anim.playing = false;
-        anim.done = true;
-        anim.phase = "done";
-        onCascadeAnimDone();
-      }
     }
 
     const captions = [
-      "① Ca²⁺ no citosol…",
-      "② Ca²⁺ encontra a calmodulina…",
-      "③ Forma-se Ca²⁺–calmodulina…",
-      "④ O complexo ativa a MLCK…",
-      "⑤ MLCK fosforila a miosina…",
-      "⑥ Miosina fica ativa…",
-      "⑦ Actina ↔ miosina (pontes cruzadas)…",
-      "⑧ A célula se contrai!",
+      "Ca²⁺ chega ao citosol…",
+      "As bolinhas de Ca²⁺ se aproximam da calmodulina…",
+      "Ca²⁺ se liga à calmodulina → complexo ativo…",
+      "O complexo Ca²⁺–CaM ativa a MLCK…",
+      "MLCK fosforila a cadeia leve da miosina…",
+      "Miosina fosforilada fica ativa…",
+      "Cabeças de miosina interagem com a actina…",
+      "A célula se contrai!",
     ];
-    updateAnimCaption("custom", captions[step] || "");
+    updateAnimCaption("custom", captions[info.step] || "");
+
+    if (info.finished) {
+      anim.playing = false;
+      anim.done = true;
+      anim.phase = "done";
+      onCascadeAnimDone();
+    }
   }
 
   function updateAnimCaption(phase, custom) {
@@ -1225,7 +1243,7 @@
       return;
     }
     if (phase === "cascade") {
-      el.textContent = "Toque para ver a cascata até a contração.";
+      el.textContent = "Toque para ver Ca²⁺ → CaM → MLCK → miosina → actina.";
       return;
     }
     const map = {
@@ -1446,109 +1464,265 @@
   }
 
   function drawCascade() {
-    const cx = state.W * 0.5;
-    const anim = state.cascadeAnim || { step: -1 };
-    const active = anim.step|0;
-    const localT = typeof anim.localT === "number" ? anim.localT : 1;
-    const pulse = 0.5 + 0.5 * Math.sin(state.anim * 0.12);
+    const W = state.W;
+    const H = state.H;
+    const cx = W * 0.5;
+    const anim = state.cascadeAnim || { step: -1, localT: 0 };
+    const step = anim.playing || anim.done ? (anim.step|0) : -1;
+    const t = typeof anim.localT === "number" ? anim.localT : (step >= 0 ? 1 : 0);
+    const ease = (x) => 1 - Math.pow(1 - Math.min(1, Math.max(0, x)), 2);
+    const lerp = (a, b, k) => a + (b - a) * k;
 
-    ctx.fillStyle = "#f4f8fa";
-    ctx.fillRect(0, 0, state.W, state.H);
+    ctx.fillStyle = "#eef5f8";
+    ctx.fillRect(0, 0, W, H);
 
+    // título + chips
     ctx.fillStyle = "#1c2a33";
-    ctx.font = "700 16px Literata, Georgia, serif";
+    ctx.font = "700 15px Literata, Georgia, serif";
     ctx.textAlign = "center";
-    ctx.fillText("Via de contração do músculo liso", cx, 36);
+    ctx.fillText("Cascata molecular → contração", cx, 26);
 
-    const startY = 58;
-    const gap = Math.min(52, (state.H - 90) / CASCADE_STEPS.length);
-
+    const chipN = CASCADE_STEPS.length;
+    const barW = Math.min(W - 20, 440);
+    const barX = (W - barW) / 2;
     CASCADE_STEPS.forEach((item, i) => {
-      const y = startY + i * gap;
-      const on = i <= active;
-      const current = i === active;
-
-      if (i > 0) {
-        const arrowOn = i <= active;
-        const grow = current ? Math.min(1, localT * 1.4) : arrowOn ? 1 : 0;
-        ctx.strokeStyle = arrowOn ? "#0d6e6e" : "#c5d3dc";
-        ctx.lineWidth = current ? 2.5 : 2;
-        ctx.globalAlpha = arrowOn ? 0.45 + 0.55 * grow : 1;
-        ctx.beginPath();
-        ctx.moveTo(cx, y - gap + 18);
-        ctx.lineTo(cx, y - gap + 18 + (gap - 32) * Math.max(grow, arrowOn && !current ? 1 : grow));
-        ctx.stroke();
-        ctx.globalAlpha = 1;
-        if (arrowOn && grow > 0.85) {
-          ctx.beginPath();
-          ctx.moveTo(cx, y - 12);
-          ctx.lineTo(cx - 5, y - 20);
-          ctx.lineTo(cx + 5, y - 20);
-          ctx.closePath();
-          ctx.fillStyle = "#0d6e6e";
-          ctx.fill();
-        }
-      }
-
-      const w = Math.min(280, state.W * 0.7);
-      const h = current ? 36 + pulse * 2 : 34;
-      const x = cx - w / 2;
+      const x = barX + (barW / chipN) * i + 1;
+      const w = barW / chipN - 2;
+      const on = step >= i;
+      const cur = step === i;
       ctx.beginPath();
-      roundRect(x, y - h / 2, w, h, 10);
-      if (current) {
-        ctx.fillStyle = "#0d6e6e";
-        ctx.fill();
-        ctx.strokeStyle = `rgba(13,110,110,${0.35 + pulse * 0.4})`;
-        ctx.lineWidth = 3;
-        roundRect(x - 3, y - h / 2 - 3, w + 6, h + 6, 12);
-        ctx.stroke();
-        ctx.fillStyle = "#f4fffe";
-      } else if (on) {
-        ctx.fillStyle = "#e6f5ec";
-        ctx.fill();
-        ctx.strokeStyle = "#8fc5a5";
-        ctx.lineWidth = 1.5;
-        ctx.stroke();
-        ctx.fillStyle = "#1f7a4d";
-      } else {
-        ctx.fillStyle = "#eef3f6";
-        ctx.fill();
-        ctx.strokeStyle = "#c5d3dc";
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.fillStyle = "#8a9aa5";
-      }
-      ctx.font = "700 13px 'Source Sans 3', sans-serif";
-      ctx.textAlign = "center";
-      ctx.fillText(item.label, cx, y + 1);
-      ctx.font = "600 10px 'Source Sans 3', sans-serif";
-      ctx.globalAlpha = current ? 0.9 : 0.7;
-      ctx.fillText(item.sub, cx, y + 14);
-      ctx.globalAlpha = 1;
+      roundRect(x, 36, w, 16, 5);
+      ctx.fillStyle = cur ? "#0d6e6e" : on ? "#d8efe6" : "#e4ebf0";
+      ctx.fill();
+      ctx.fillStyle = cur ? "#f4fffe" : on ? "#1f7a4d" : "#9aadb8";
+      ctx.font = "700 8px 'Source Sans 3', sans-serif";
+      ctx.fillText(item.label, x + w / 2, 47);
+    });
 
-      if (i === 0 && on) {
-        for (let k = 0; k < 5; k++) {
-          const bob = Math.sin(state.anim * 0.15 + k) * 3;
+    // cena molecular
+    const sceneTop = 64;
+    const sceneH = H - sceneTop - 18;
+    const actinY = sceneTop + sceneH * 0.22;
+    const myoY = sceneTop + sceneH * 0.78;
+    const midY = sceneTop + sceneH * 0.48;
+    const x0 = W * 0.08;
+    const x1 = W * 0.92;
+
+    // ACTINA (filamento fino)
+    ctx.strokeStyle = "#3b82c4";
+    ctx.lineWidth = 8;
+    ctx.lineCap = "round";
+    ctx.beginPath();
+    ctx.moveTo(x0, actinY);
+    ctx.lineTo(x1, actinY);
+    ctx.stroke();
+    for (let x = x0 + 10; x < x1; x += 14) {
+      ctx.beginPath();
+      ctx.arc(x, actinY + Math.sin((x + state.anim) * 0.08) * 2, 5.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#5a9fd4";
+      ctx.fill();
+    }
+    ctx.fillStyle = "#3b82c4";
+    ctx.font = "700 11px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText("ACTINA", x0, actinY - 14);
+
+    // MIOSINA (filamento espesso)
+    const myoActive = step >= 5;
+    ctx.strokeStyle = myoActive ? "#c45c7a" : "#b85a72";
+    ctx.lineWidth = myoActive ? 6 : 4.5;
+    ctx.beginPath();
+    ctx.moveTo(x0 + 20, myoY);
+    ctx.lineTo(x1 - 20, myoY);
+    ctx.stroke();
+    const headCount = 9;
+    for (let i = 0; i < headCount; i++) {
+      const hx = x0 + 40 + i * ((x1 - x0 - 80) / (headCount - 1));
+      const reach = step >= 6
+        ? ease(Math.min(1, t * 1.2 - i * 0.05)) * (actinY - myoY + 8)
+        : myoActive
+          ? 18 + Math.sin(state.anim * 0.12 + i) * 4
+          : 10;
+      const tipY = myoY - reach;
+      ctx.strokeStyle = myoActive ? "#1e4e8c" : "#2b6cb0";
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(hx, myoY - 2);
+      ctx.lineTo(hx + (i % 2 ? 6 : -6), tipY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(hx + (i % 2 ? 6 : -6), tipY, myoActive ? 4.5 : 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = myoActive ? "#2563a8" : "#3a7ec4";
+      ctx.fill();
+      if (step >= 4) {
+        // fosfato nas cabeças
+        const showP = step > 4 || ease(t) > i / headCount;
+        if (showP) {
           ctx.beginPath();
-          ctx.arc(cx - 40 + k * 20, y - 28 + bob, 4 + (current ? pulse : 0), 0, Math.PI * 2);
-          ctx.fillStyle = "#3498db";
-          ctx.fill();
-        }
-      }
-      if (i === 4 && current) {
-        for (let k = 0; k < 3; k++) {
-          const t = Math.min(1, localT * 1.2 - k * 0.15);
-          if (t <= 0) continue;
-          ctx.beginPath();
-          ctx.arc(cx - 30 + t * 60, y - 26, 6, 0, Math.PI * 2);
+          ctx.arc(hx + (i % 2 ? 14 : -14), myoY - 8, 5, 0, Math.PI * 2);
           ctx.fillStyle = "#e2b84a";
           ctx.fill();
           ctx.fillStyle = "#1c2a33";
-          ctx.font = "700 9px 'Source Sans 3', sans-serif";
-          ctx.fillText("P", cx - 30 + t * 60, y - 23);
+          ctx.font = "700 8px 'Source Sans 3', sans-serif";
+          ctx.textAlign = "center";
+          ctx.fillText("P", hx + (i % 2 ? 14 : -14), myoY - 5);
         }
       }
-    });
+    }
+    ctx.fillStyle = "#b85a72";
+    ctx.font = "700 11px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillText(myoActive ? "MIOSINA ATIVA" : "MIOSINA", x0, myoY + 22);
+
+    // posições dos atores
+    const camHome = { x: W * 0.28, y: midY };
+    const mlckHome = { x: W * 0.62, y: midY };
+    const complexBound = step >= 2;
+    const complexActive = step >= 3;
+
+    // movimento do complexo em direção à MLCK (step 3)
+    let camPos = { ...camHome };
+    if (step === 3) {
+      const k = ease(t);
+      camPos = { x: lerp(camHome.x, mlckHome.x - 50, k), y: midY };
+    } else if (step > 3) {
+      camPos = { x: mlckHome.x - 50, y: midY };
+    }
+
+    // MLCK desce até a miosina no step 4
+    let mlckPos = { ...mlckHome };
+    if (step === 4) {
+      const k = ease(Math.min(1, t * 1.1));
+      mlckPos = { x: lerp(mlckHome.x, cx, k * 0.3), y: lerp(mlckHome.y, myoY - 36, k) };
+    } else if (step > 4) {
+      mlckPos = { x: cx + 20, y: myoY - 36 };
+    }
+
+    // CALMODULINA
+    const camGlow = complexBound ? 0.3 + 0.2 * Math.sin(state.anim * 0.12) : 0.12;
+    ctx.beginPath();
+    ctx.arc(camPos.x, camPos.y, 22, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(39,174,96,${camGlow})`;
+    ctx.fill();
+    ctx.lineWidth = 3.5;
+    ctx.strokeStyle = complexBound ? "#0d6e6e" : "#27ae60";
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(camPos.x, camPos.y, 10, 0, Math.PI * 2);
+    ctx.fillStyle = complexBound ? "#0d6e6e" : "#27ae60";
+    ctx.fill();
+    ctx.fillStyle = "#1c2a33";
+    ctx.font = "700 11px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText(complexBound ? "Ca²⁺–CaM" : "calmodulina", camPos.x, camPos.y - 32);
+
+    // MLCK
+    const mlckOn = step >= 3;
+    ctx.fillStyle = mlckOn ? "#0d6e6e" : "#a8b8c2";
+    roundRect(mlckPos.x - 28, mlckPos.y - 14, 56, 28, 8);
+    ctx.fill();
+    if (mlckOn) {
+      const p = 0.35 + 0.35 * Math.sin(state.anim * 0.15);
+      ctx.strokeStyle = `rgba(13,110,110,${p})`;
+      ctx.lineWidth = 2.5;
+      roundRect(mlckPos.x - 32, mlckPos.y - 18, 64, 36, 10);
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#f4fffe";
+    ctx.font = "700 12px 'Source Sans 3', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("MLCK", mlckPos.x, mlckPos.y + 4);
+    if (step === 3 && t > 0.4) {
+      ctx.fillStyle = "#0d6e6e";
+      ctx.font = "700 11px 'Source Sans 3', sans-serif";
+      ctx.fillText("ativa!", mlckPos.x, mlckPos.y + 28);
+    }
+
+    // Ca²⁺ bolinhas
+    const caCount = 4;
+    for (let i = 0; i < caCount; i++) {
+      let x;
+      let y;
+      const dockAng = (i / caCount) * Math.PI * 2 - Math.PI / 2;
+      const dockX = camPos.x + Math.cos(dockAng) * 16;
+      const dockY = camPos.y + Math.sin(dockAng) * 16;
+
+      if (step < 0) {
+        continue;
+      } else if (step === 0) {
+        // entram pela esquerda
+        const k = ease(Math.min(1, t * 1.1 - i * 0.12));
+        x = lerp(-20, W * 0.12 + i * 22, k);
+        y = midY - 30 + i * 18 + Math.sin(state.anim * 0.1 + i) * 4;
+      } else if (step === 1) {
+        // aproximam da CaM
+        const fromX = W * 0.12 + i * 22;
+        const fromY = midY - 30 + i * 18;
+        const k = ease(Math.min(1, t * 1.15 - i * 0.1));
+        x = lerp(fromX, dockX, k);
+        y = lerp(fromY, dockY, k);
+      } else {
+        // ligadas à CaM (viajam com ela)
+        x = dockX;
+        y = dockY;
+      }
+
+      ctx.beginPath();
+      ctx.arc(x, y, 6.5, 0, Math.PI * 2);
+      ctx.fillStyle = "#3498db";
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "700 7px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Ca", x, y + 2);
+    }
+
+    // seta complexo → MLCK
+    if (step === 3) {
+      ctx.strokeStyle = `rgba(13,110,110,${0.4 + 0.5 * ease(t)})`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 4]);
+      ctx.beginPath();
+      ctx.moveTo(camPos.x + 24, camPos.y);
+      ctx.lineTo(mlckPos.x - 30, mlckPos.y);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // fosfatos voando MLCK → miosina (step 4)
+    if (step === 4) {
+      for (let i = 0; i < 4; i++) {
+        const k = ease(Math.min(1, t * 1.2 - i * 0.12));
+        if (k <= 0) continue;
+        const tx = x0 + 50 + i * 55;
+        const x = lerp(mlckPos.x, tx, k);
+        const y = lerp(mlckPos.y + 10, myoY - 12, k);
+        ctx.beginPath();
+        ctx.arc(x, y, 7, 0, Math.PI * 2);
+        ctx.fillStyle = "#e2b84a";
+        ctx.fill();
+        ctx.fillStyle = "#1c2a33";
+        ctx.font = "700 9px 'Source Sans 3', sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("P", x, y + 3);
+      }
+    }
+
+    // rótulo de pontes
+    if (step === 6) {
+      ctx.fillStyle = "#c45c3a";
+      ctx.font = "700 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("pontes cruzadas: actina ↔ miosina", cx, (actinY + myoY) / 2);
+    }
+
+    // idle hint
+    if (step < 0 && !anim.playing) {
+      ctx.fillStyle = "#5a6d78";
+      ctx.font = "600 13px 'Source Sans 3', sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Toque no botão para animar a cascata", cx, midY);
+    }
   }
 
   function drawCaM(g) {
