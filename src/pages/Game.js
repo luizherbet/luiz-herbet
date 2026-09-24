@@ -1,16 +1,25 @@
-import React, { memo } from 'react';
+import { useEffect } from 'react';
 
-const Game = memo(() => {
+/**
+ * Em produção (Vercel) /game já serve o HTML estático.
+ * No CRA local, o Router captura /game — redirecionamos para o arquivo estático.
+ */
+const Game = () => {
+  useEffect(() => {
+    window.location.replace('/game/index.html');
+  }, []);
+
   return (
-    <main className="fixed inset-0 m-0 p-0 overflow-hidden bg-[#d9e4ec]">
-      <iframe
-        title="Contração Muscular — Guia Didático"
-        src="/game/index.html"
-        className="block w-full h-full border-0"
-        allow="fullscreen"
-      />
+    <main className="min-h-[100svh] flex items-center justify-center bg-[#d9e4ec] text-[#1c2a33] px-6 text-center">
+      <p>
+        Abrindo o guia…
+        <br />
+        <a href="/game/index.html" className="underline underline-offset-4 mt-3 inline-block">
+          Abrir Contração Muscular
+        </a>
+      </p>
     </main>
   );
-});
+};
 
 export default Game;
